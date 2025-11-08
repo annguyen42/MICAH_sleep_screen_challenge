@@ -35,7 +35,7 @@ ssl._create_default_https_context = ssl._create_unverified_context
 SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRCbQDPet7-hUdVO0-CzfC3KrhHY6JbUO4UlMpUwbJJ_cp2LhqJSnX34jD-xqZcFAmI4FZZcEg9Wsuj/pub?output=csv"
 
 # The *exact* column name for your classifier (teen, parent, teacher)
-CLASSIFIER_COL = "Participant"  # Example: "Are you a teen, parent, or teacher?"
+CLASSIFIER_COL = "Tu es :"  # Example: "Are you a teen, parent, or teacher?"
 
 # The *exact* column name for the user's unique identifier
 IDENTIFIER_COL = "Choisis ton code secret" # Example: "Email Address" or "Your Secret Code"
