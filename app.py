@@ -38,16 +38,15 @@ IDENTIFIER_COL = "Choisis ton code secret" # Example: "Email Address" or "Your S
 #NUMERICAL_QUESTION_COL = "A quel point ton sommeil est-il réparateur ?"
 #CATEGORICAL_QUESTION_COL = "Combien d’heures passes-tu sur les écrans le soir ?"
 SCALE_QUESTIONS = [
-    "Sur une échelle de 1 à 5, comment te sens-tu ?",
-    "Note ton sommeil de 1 (mauvais) à 10 (parfait)",
-    "Combien d'heures d'écran par jour ?"
+    "A quel point ton sommeil est-il réparateur ?",
+    "Quelle est la qualité de ton sommeil ?"
 ]
 
 # Mettez TOUTES vos questions à choix/catégoriques ici
 CATEGORY_QUESTIONS = [
-    "Quelle est ta principale préoccupation ?",
-    "Ton outil préféré est :",
-    "Le matin, tu te sens :"
+    "As tu des écrans dans ta chambre (smartphone compris) ?",
+    "C’est 22 h 30. Tu viens de recevoir une notification. Que fais-tu ?",
+    "Regardes-tu ton téléphone dès le réveil ?"
 ]
 # --- (End of configuration) ---
 
