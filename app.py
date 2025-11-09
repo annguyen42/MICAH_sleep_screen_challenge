@@ -8,13 +8,6 @@ import requests  # <-- Add this
 import io       # <-- Add this
 
 # Mobile display configuration
-st.set_page_config(
-    page_title="Ton Bilan",
-    page_icon="📊",
-    layout="centered"  # Important pour les mobiles
-)
-
-st.title("MICAH Sleep Screen APP")
 
 # Create a session with custom SSL configuration
 #http = urllib3.PoolManager(
@@ -61,7 +54,6 @@ CATEGORY_QUESTIONS = [
 
 
 # --- 2. CHARGEMENT DES DONNÉES ---
-
 @st.cache_data(ttl=300)
 def load_data(url):
     """Charge les données depuis le lien CSV publié."""
@@ -258,7 +250,7 @@ else:
             except Exception as e:
                 st.error(f"Erreur d'affichage : {e}")
 
-                
+
 # --- Données brutes (Optionnel) ---
 st.markdown("---")
 if st.checkbox("Afficher toutes les données brutes (anonymisées)"):
