@@ -246,7 +246,7 @@ def load_data(url):
 
 # --- ENHANCED PLOTTING FUNCTIONS ---
 
-def plot_numerical_comparison(df, question_col, classifier_col, user_value, show_other_groups=True):
+def plot_numerical_comparison(df, question_col, classifier_col, user_value, show_other_groups=True, color_by_group=True):
     """
     Crée un histogramme amélioré avec un design moderne et mobile-friendly.
     Utilise des bins entiers et met en évidence la réponse de l'utilisateur.
@@ -284,6 +284,21 @@ def plot_numerical_comparison(df, question_col, classifier_col, user_value, show
     histogram_data['is_user_value'] = histogram_data['rounded_value'] == int(round(user_value))
 
     # Enhanced histogram with proper stacking and colors
+    # Choose color encoding: by group or single fill based on user's group
+    if color_by_group:
+        color_encoding = alt.Color(f"{cls_field}:N", 
+                                   title="Type de répondant",
+                                   scale=color_scale,
+                                   legend=alt.Legend(
+                                       orient='bottom',
+                                       titleFontSize=12,
+                                       labelFontSize=11
+                                   ))
+    else:
+        # single fill using the user's group color (fallback to default)
+        fill_color = get_group_color(user_group) if user_group is not None else DEFAULT_COLOR
+        color_encoding = alt.value(fill_color)
+
     bars = alt.Chart(histogram_data).mark_bar(
         cornerRadiusTopLeft=4,
         cornerRadiusTopRight=4
@@ -305,14 +320,7 @@ def plot_numerical_comparison(df, question_col, classifier_col, user_value, show
                     grid=True,
                     gridOpacity=0.3
                 )),
-        color=alt.Color(f"{cls_field}:N", 
-                       title="Type de répondant",
-                       scale=color_scale,
-                       legend=alt.Legend(
-                           orient='bottom',
-                           titleFontSize=12,
-                           labelFontSize=11
-                       )),
+        color=color_encoding,
         opacity=alt.condition(
             alt.datum.is_user_value,
             alt.value(1.0),
@@ -335,6 +343,7 @@ def plot_numerical_comparison(df, question_col, classifier_col, user_value, show
     ).encode(
         x=alt.X('rounded_value:O'),
         y=alt.Y('count:Q', stack='zero'),
+        # use group color for border when highlighting
         color=alt.Color(f"{cls_field}:N", scale=color_scale, legend=None)
     )
     
@@ -544,7 +553,7 @@ def plot_pie_comparison(df, question_col, classifier_col, user_value, show_other
         strokeWidth=0
     )
 
-def plot_categorical_comparison(df, question_col, classifier_col, user_value, show_other_groups=True):
+def plot_categorical_comparison(df, question_col, classifier_col, user_value, show_other_groups=True, color_by_group=True):
     """
     Crée un graphique à barres amélioré pour les catégories.
     """
@@ -576,6 +585,22 @@ def plot_categorical_comparison(df, question_col, classifier_col, user_value, sh
     # Get color scale
     color_scale = get_color_scale(df_plot, cls_field)
 
+    # color encoding choice
+    if color_by_group:
+        color_encoding = alt.Color(f"{cls_field}:N",
+                                   title="Type de répondant",
+                                   scale=color_scale,
+                                   legend=alt.Legend(
+                                       orient='bottom',
+                                       titleFontSize=12,
+                                       labelFontSize=11
+                                   ))
+    else:
+        # single fill with user's group color (if available)
+        user_group_name = user_data[classifier_col] if 'user_data' in globals() else None
+        fill_color = get_group_color(user_group_name) if user_group_name is not None else DEFAULT_COLOR
+        color_encoding = alt.value(fill_color)
+
     # Enhanced bar chart
     bars = alt.Chart(grouped).mark_bar(
         cornerRadiusTopLeft=4,
@@ -596,14 +621,7 @@ def plot_categorical_comparison(df, question_col, classifier_col, user_value, sh
                     grid=True,
                     gridOpacity=0.3
                 )),
-        color=alt.Color(f"{cls_field}:N", 
-                       title="Type de répondant",
-                       scale=color_scale,
-                       legend=alt.Legend(
-                           orient='bottom',
-                           titleFontSize=12,
-                           labelFontSize=11
-                       )),
+        color=color_encoding,
         opacity=alt.condition(
             alt.datum.is_user_response,
             alt.value(1.0),
@@ -731,6 +749,12 @@ with col1:
         value=True,
         help="Active pour voir toutes les réponses, désactive pour voir seulement ton groupe"
     )
+with col2:
+    show_color_by_group = st.checkbox(
+        "Colorer par groupe",
+        value=True,
+        help="Lorsque activé, les barres sont remplies avec la couleur du groupe (ado/parent/teacher)."
+    )
 
 # Scale questions section
 if SCALE_QUESTIONS:
@@ -754,7 +778,8 @@ if SCALE_QUESTIONS:
                         question_col=actual_col,
                         classifier_col=CLASSIFIER_COL,
                         user_value=user_answer,
-                        show_other_groups=show_all_groups
+                        show_other_groups=show_all_groups,
+                        color_by_group=show_color_by_group
                     )
                     st.altair_chart(chart, use_container_width=True)
                     
@@ -814,7 +839,8 @@ if CATEGORY_QUESTIONS:
                             question_col=actual_col,
                             classifier_col=CLASSIFIER_COL,
                             user_value=user_answer,
-                            show_other_groups=show_all_groups
+                            show_other_groups=show_all_groups,
+                            color_by_group=show_color_by_group
                         )
                     
                     st.altair_chart(chart, use_container_width=True)
