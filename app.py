@@ -301,7 +301,8 @@ def plot_numerical_comparison(df, question_col, classifier_col, user_value, show
 
     bars = alt.Chart(histogram_data).mark_bar(
         cornerRadiusTopLeft=4,
-        cornerRadiusTopRight=4
+        cornerRadiusTopRight=4,
+        filled=True
     ).encode(
         x=alt.X('rounded_value:O', 
                 title=question_col,
@@ -324,7 +325,7 @@ def plot_numerical_comparison(df, question_col, classifier_col, user_value, show
         opacity=alt.condition(
             alt.datum.is_user_value,
             alt.value(1.0),
-            alt.value(0.5)
+            alt.value(0.8)
         ),
         tooltip=[
             alt.Tooltip('rounded_value:O', title=question_col),
@@ -469,7 +470,8 @@ def plot_pie_comparison(df, question_col, classifier_col, user_value, show_other
             base = alt.Chart(pie_df).mark_arc(
                 innerRadius=40,
                 stroke='white',
-                strokeWidth=2
+                strokeWidth=1,
+                filled=True
             ).encode(
                 theta=alt.Theta('count:Q'),
                 color=alt.Color('response:N',
@@ -484,7 +486,7 @@ def plot_pie_comparison(df, question_col, classifier_col, user_value, show_other
                 opacity=alt.condition(
                     alt.datum.is_user_response,
                     alt.value(1.0),
-                    alt.value(0.85)
+                    alt.value(0.9)
                 ),
                 tooltip=[
                     alt.Tooltip('response:N', title='Réponse'),
@@ -604,7 +606,8 @@ def plot_categorical_comparison(df, question_col, classifier_col, user_value, sh
     # Enhanced bar chart
     bars = alt.Chart(grouped).mark_bar(
         cornerRadiusTopLeft=4,
-        cornerRadiusTopRight=4
+        cornerRadiusTopRight=4,
+        filled=True
     ).encode(
         x=alt.X(f"{q_field}:N", 
                 title=None,
@@ -625,7 +628,7 @@ def plot_categorical_comparison(df, question_col, classifier_col, user_value, sh
         opacity=alt.condition(
             alt.datum.is_user_response,
             alt.value(1.0),
-            alt.value(0.4)
+            alt.value(0.8)
         ),
         tooltip=[
             alt.Tooltip(q_field, type='nominal', title=question_col),
