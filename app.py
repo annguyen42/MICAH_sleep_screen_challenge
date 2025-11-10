@@ -248,8 +248,8 @@ def load_data(url):
 
 def plot_numerical_comparison(df, question_col, classifier_col, user_value, show_other_groups=True, color_by_group=True):
     """
-    Crée un histogramme amélioré avec un design moderne et mobile-friendly.
-    Utilise des bins entiers et met en évidence la réponse de l'utilisateur.
+    Creates an enhanced histogram with modern design and mobile-friendly layout.
+    Uses integer bins and highlights the user's response with grouped/dodged bars by classifier.
     """
     # Prepare safe column names for Altair
     df_plot = df.copy()
@@ -266,10 +266,10 @@ def plot_numerical_comparison(df, question_col, classifier_col, user_value, show
 
     # Filter data based on show_other_groups option
     if not show_other_groups and user_group:
-        df_plot = df_plot[df_plot[classifier_col] == user_group]
+        df_plot = df_plot[df_plot[cls_field] == user_group]
 
     # Calculate statistics for context
-    user_percentile = (df_plot[col_map.get(question_col, question_col)] <= user_value).mean() * 100
+    user_percentile = (df_plot[q_field] <= user_value).mean() * 100
 
     # Round values to integers for binning
     df_plot['rounded_value'] = df_plot[q_field].round().astype(int)
@@ -283,8 +283,7 @@ def plot_numerical_comparison(df, question_col, classifier_col, user_value, show
     # Mark user's response
     histogram_data['is_user_value'] = histogram_data['rounded_value'] == int(round(user_value))
 
-    # Enhanced histogram with proper stacking and colors
-    # Choose color encoding: by group or single fill based on user's group
+    # Choose color encoding
     if color_by_group:
         color_encoding = alt.Color(f"{cls_field}:N", 
                                    title="Type de répondant",
@@ -295,14 +294,13 @@ def plot_numerical_comparison(df, question_col, classifier_col, user_value, show
                                        labelFontSize=11
                                    ))
     else:
-        # single fill using the user's group color (fallback to default)
         fill_color = get_group_color(user_group) if user_group is not None else DEFAULT_COLOR
         color_encoding = alt.value(fill_color)
 
-    # For a grouped (dodged) histogram we use xOffset by classifier group
+    # Dodged histogram bars
     bars = alt.Chart(histogram_data).mark_bar(
-        cornerRadiusTopLeft=4,
-        cornerRadiusTopRight=4,
+        cornerRadiusTopLeft=6,
+        cornerRadiusTopRight=6,
         filled=True
     ).encode(
         x=alt.X('rounded_value:O', 
@@ -327,7 +325,7 @@ def plot_numerical_comparison(df, question_col, classifier_col, user_value, show
         opacity=alt.condition(
             alt.datum.is_user_value,
             alt.value(1.0),
-            alt.value(0.8)
+            alt.value(0.85)
         ),
         tooltip=[
             alt.Tooltip('rounded_value:O', title=question_col),
@@ -338,23 +336,21 @@ def plot_numerical_comparison(df, question_col, classifier_col, user_value, show
 
     # Highlight border for user's value
     user_highlight = alt.Chart(histogram_data[histogram_data['is_user_value']]).mark_bar(
-        cornerRadiusTopLeft=4,
-        cornerRadiusTopRight=4,
+        cornerRadiusTopLeft=6,
+        cornerRadiusTopRight=6,
         stroke='#E53E3E',
         strokeWidth=3,
         fillOpacity=0
     ).encode(
         x=alt.X('rounded_value:O'),
         y=alt.Y('count:Q', stack=None),
-        xOffset=f"{cls_field}:N",
-        # use group color for border when highlighting
-        color=alt.Color(f"{cls_field}:N", scale=color_scale, legend=None)
+        xOffset=f"{cls_field}:N"
     )
     
     # Add arrow pointing to user's value
     arrow_data = pd.DataFrame({
         'x': [int(round(user_value))],
-        'y': [histogram_data[histogram_data['is_user_value']]['count'].sum() * 1.1],
+        'y': [histogram_data[histogram_data['is_user_value']]['count'].max() * 1.15],
         'label': ['Ta réponse ↓']
     })
     
@@ -377,7 +373,8 @@ def plot_numerical_comparison(df, question_col, classifier_col, user_value, show
         title={
             "text": f"Distribution des réponses" + (" (ton groupe)" if not show_other_groups else " (tous les groupes)"),
             "fontSize": 16,
-            "anchor": "start"
+            "anchor": "start",
+            "fontWeight": "normal"
         }
     ).configure_view(
         strokeWidth=0
@@ -387,38 +384,38 @@ def plot_numerical_comparison(df, question_col, classifier_col, user_value, show
     
     return chart, user_percentile
 
+
 def is_yes_no_question(df, question_col):
     """Check if a question is a yes/no type question."""
     unique_values = df[question_col].dropna().unique()
-    # Normalize values
     values_lower = [str(v).lower().strip() for v in unique_values]
     values_normalized = [_normalize_text(v) for v in values_lower]
 
-    yes_no_sets = [set(['oui', 'non']), set(['yes', 'no']), set(['vrai', 'faux']), set(['true', 'false'])]
-    # if all observed normalized values are subset of any yes/no set -> yes/no question
+    yes_no_sets = [
+        set(['oui', 'non']), 
+        set(['yes', 'no']), 
+        set(['vrai', 'faux']), 
+        set(['true', 'false'])
+    ]
+    
     for s in yes_no_sets:
         if set(values_normalized).issubset(s):
             return True
 
-    # fallback: binary question
     return len(values_normalized) == 2
+
 
 def plot_pie_comparison(df, question_col, classifier_col, user_value, show_other_groups=True):
     """
-    Crée des graphiques en camembert pour les questions oui/non.
+    Creates pie charts for yes/no questions, one per group with modern styling.
     """
-    # Get user's group
     user_group = user_data[classifier_col] if 'user_data' in globals() else None
 
-    # Filter data based on show_other_groups option
     df_plot = df.copy()
     if not show_other_groups and user_group:
         df_plot = df_plot[df_plot[classifier_col] == user_group]
 
-    # Get unique groups for creating multiple pie charts
     groups = sorted(df_plot[classifier_col].dropna().unique())
-
-    # Create charts for each group
     charts = []
 
     for i, group in enumerate(groups):
@@ -426,11 +423,9 @@ def plot_pie_comparison(df, question_col, classifier_col, user_value, show_other
         if group_data.empty:
             continue
 
-        # Normalize responses (keep original for label)
         resp_series = group_data[question_col].astype(str).str.strip()
         value_counts = resp_series.value_counts()
 
-        # Create data for this group's pie chart
         pie_data = []
         for value, count in value_counts.items():
             norm_val = _normalize_text(value)
@@ -452,31 +447,25 @@ def plot_pie_comparison(df, question_col, classifier_col, user_value, show_other
         if pie_df.empty:
             continue
 
-        # Determine colors for yes/no (based on normalized response)
+        # Color mapping for yes/no responses
         response_colors = {}
         for norm_r, r in zip(pie_df['norm_response'], pie_df['response']):
-            if norm_r in ['oui', 'yes']:
+            if norm_r in ['oui', 'yes', 'vrai', 'true']:
                 response_colors[r] = '#2ECC71'  # Green
-            elif norm_r in ['non', 'no']:
+            elif norm_r in ['non', 'no', 'faux', 'false']:
                 response_colors[r] = '#E74C3C'  # Red
-            elif norm_r in ['vrai', 'faux', 'true', 'false']:
-                # map vrai->green, faux->red
-                if norm_r in ['vrai', 'true']:
-                    response_colors[r] = '#2ECC71'
-                else:
-                    response_colors[r] = '#E74C3C'
             else:
-                response_colors[r] = '#95A5A6'  # Gray for other
+                response_colors[r] = '#95A5A6'  # Gray
 
-        # Create pie chart for this group
         try:
             base = alt.Chart(pie_df).mark_arc(
-                innerRadius=40,
+                innerRadius=50,
+                outerRadius=90,
                 stroke='white',
-                strokeWidth=1,
+                strokeWidth=2,
                 filled=True
             ).encode(
-                theta=alt.Theta('count:Q'),
+                theta=alt.Theta('count:Q', stack=True),
                 color=alt.Color('response:N',
                                scale=alt.Scale(
                                    domain=list(response_colors.keys()),
@@ -484,21 +473,23 @@ def plot_pie_comparison(df, question_col, classifier_col, user_value, show_other
                                ),
                                legend=None if i > 0 else alt.Legend(
                                    orient='bottom',
-                                   title='Réponse'
+                                   title='Réponse',
+                                   titleFontSize=12,
+                                   labelFontSize=11
                                )),
                 opacity=alt.condition(
                     alt.datum.is_user_response,
                     alt.value(1.0),
-                    alt.value(0.9)
+                    alt.value(0.8)
                 ),
                 tooltip=[
                     alt.Tooltip('response:N', title='Réponse'),
                     alt.Tooltip('count:Q', title='Nombre'),
-                    alt.Tooltip('percentage:Q', title='Pourcentage', format='.1f')
+                    alt.Tooltip('percentage:Q', title='Pourcentage (%)', format='.1f')
                 ]
             ).properties(
-                width=180,
-                height=180,
+                width=200,
+                height=200,
                 title={
                     "text": f"{get_group_icon(group)} {group}",
                     "color": get_group_color(group),
@@ -507,62 +498,50 @@ def plot_pie_comparison(df, question_col, classifier_col, user_value, show_other
                 }
             )
         except Exception:
-            # If chart creation fails for this group, skip it
             continue
 
-        # Add percentage labels
+        # Percentage labels
         labels = alt.Chart(pie_df).mark_text(
-            radius=70,
-            fontSize=12,
-            fontWeight='bold',
-            color='white'
+            radius=110,
+            fontSize=13,
+            fontWeight='bold'
         ).encode(
-            theta=alt.Theta('count:Q'),
-            text=alt.Text('percentage:Q', format='.0f')
+            theta=alt.Theta('count:Q', stack=True),
+            text=alt.Text('percentage:Q', format='.0f'),
+            color=alt.value('#333')
         )
 
-        # Add response labels
-        response_labels = alt.Chart(pie_df).mark_text(
-            radius=100,
-            fontSize=11
-        ).encode(
-            theta=alt.Theta('count:Q'),
-            text='response:N'
-        )
-
-        charts.append(base + labels + response_labels)
-
-    # Combine charts horizontally
-    if len(charts) == 1:
-        final_chart = charts[0]
-    elif len(charts) == 2:
-        final_chart = alt.hconcat(*charts)
-    else:
-        # For 3 or more, arrange in rows
-        final_chart = alt.vconcat(
-            *[alt.hconcat(*charts[i:i+3]) for i in range(0, len(charts), 3)]
-        )
+        charts.append(base + labels)
 
     if len(charts) == 0:
-        # Fallback empty chart
         empty_df = pd.DataFrame({'text': ['Aucune donnée disponible']})
         return alt.Chart(empty_df).mark_text(fontSize=14).encode(text='text:N').properties()
+
+    # Arrange charts
+    if len(charts) == 1:
+        final_chart = charts[0]
+    elif len(charts) <= 3:
+        final_chart = alt.hconcat(*charts, spacing=20)
+    else:
+        rows = [alt.hconcat(*charts[i:i+3], spacing=20) for i in range(0, len(charts), 3)]
+        final_chart = alt.vconcat(*rows, spacing=20)
 
     return final_chart.properties(
         title={
             "text": f"Répartition des réponses" + (" (ton groupe)" if not show_other_groups else " (tous les groupes)"),
             "fontSize": 16,
-            "anchor": "start"
+            "anchor": "start",
+            "fontWeight": "normal"
         }
     ).configure_view(
         strokeWidth=0
     )
 
+
 def plot_categorical_comparison(df, question_col, classifier_col, user_value, show_other_groups=True, color_by_group=True):
     """
-    Crée un graphique à barres amélioré pour les catégories.
+    Creates an enhanced grouped bar chart for categorical questions with dodged bars.
     """
-    # Prepare safe column names
     df_plot = df.copy()
     col_map = {col: (col.replace(':', '\\:') if isinstance(col, str) and ':' in col else col)
                for col in df_plot.columns}
@@ -572,25 +551,20 @@ def plot_categorical_comparison(df, question_col, classifier_col, user_value, sh
     q_field = col_map.get(question_col, question_col)
     cls_field = col_map.get(classifier_col, classifier_col)
 
-    # Get user's group
-    user_group = df_plot[df_plot[col_map.get(classifier_col, classifier_col)] == user_data[classifier_col]].iloc[0][cls_field] if 'user_data' in globals() else None
+    user_group = user_data[classifier_col] if 'user_data' in globals() else None
 
-    # Filter data based on show_other_groups option
     if not show_other_groups and user_group:
         df_plot = df_plot[df_plot[cls_field] == user_group]
 
-    # Calculate percentage for each category
+    # Calculate counts and percentages
     grouped = df_plot.groupby([q_field, cls_field]).size().reset_index(name='count')
     total = grouped.groupby(q_field)['count'].transform('sum')
     grouped['percentage'] = (grouped['count'] / total * 100).round(1)
-    
-    # Mark user's response
     grouped['is_user_response'] = grouped[q_field] == user_value
     
-    # Get color scale
     color_scale = get_color_scale(df_plot, cls_field)
 
-    # color encoding choice
+    # Color encoding choice
     if color_by_group:
         color_encoding = alt.Color(f"{cls_field}:N",
                                    title="Type de répondant",
@@ -601,23 +575,21 @@ def plot_categorical_comparison(df, question_col, classifier_col, user_value, sh
                                        labelFontSize=11
                                    ))
     else:
-        # single fill with user's group color (if available)
-        user_group_name = user_data[classifier_col] if 'user_data' in globals() else None
-        fill_color = get_group_color(user_group_name) if user_group_name is not None else DEFAULT_COLOR
+        fill_color = get_group_color(user_group) if user_group is not None else DEFAULT_COLOR
         color_encoding = alt.value(fill_color)
 
-    # Enhanced bar chart
-    # Grouped (dodged) bars: use xOffset by classifier
+    # Dodged bars
     bars = alt.Chart(grouped).mark_bar(
-        cornerRadiusTopLeft=4,
-        cornerRadiusTopRight=4,
+        cornerRadiusTopLeft=6,
+        cornerRadiusTopRight=6,
         filled=True
     ).encode(
         x=alt.X(f"{q_field}:N", 
                 title=None,
                 axis=alt.Axis(
                     labelAngle=-45 if len(grouped[q_field].unique()) > 3 else 0,
-                    labelFontSize=12
+                    labelFontSize=12,
+                    labelLimit=150
                 )),
         y=alt.Y('count:Q', 
                 title="Nombre de réponses",
@@ -633,55 +605,37 @@ def plot_categorical_comparison(df, question_col, classifier_col, user_value, sh
         opacity=alt.condition(
             alt.datum.is_user_response,
             alt.value(1.0),
-            alt.value(0.8)
+            alt.value(0.85)
         ),
         tooltip=[
             alt.Tooltip(q_field, type='nominal', title=question_col),
             alt.Tooltip(cls_field, type='nominal', title=classifier_col),
             alt.Tooltip('count:Q', title='Nombre'),
-            alt.Tooltip('percentage:Q', title='Pourcentage', format='.1f')
+            alt.Tooltip('percentage:Q', title='Pourcentage (%)', format='.1f')
         ]
     )
     
-    # Highlight border for user's response
+    # Highlight user's response
     user_bars = alt.Chart(grouped[grouped['is_user_response']]).mark_bar(
-        cornerRadiusTopLeft=4,
-        cornerRadiusTopRight=4,
+        cornerRadiusTopLeft=6,
+        cornerRadiusTopRight=6,
         stroke='#E53E3E',
         strokeWidth=3,
         fillOpacity=0
     ).encode(
         x=alt.X(f"{q_field}:N"),
         y=alt.Y('count:Q', stack=None),
-        xOffset=f"{cls_field}:N",
-        color=alt.Color(f"{cls_field}:N", scale=color_scale, legend=None)
+        xOffset=f"{cls_field}:N"
     )
     
-    # Add percentage labels on bars
-    text = alt.Chart(grouped).mark_text(
-        dy=-5,
-        fontSize=11,
-        fontWeight='bold'
-    ).encode(
-        x=alt.X(f"{q_field}:N"),
-        y=alt.Y('count:Q', stack=None),
-        xOffset=f"{cls_field}:N",
-        text=alt.Text('percentage:Q', format='.0f'),
-        color=alt.value('white'),
-        opacity=alt.condition(
-            alt.datum.is_user_response,
-            alt.value(1.0),
-            alt.value(0)
-        )
-    )
-    
-    final_chart = (bars + user_bars + text).properties(
+    final_chart = (bars + user_bars).properties(
         width='container',
         height=350,
         title={
             "text": f"Répartition des réponses" + (" (ton groupe)" if not show_other_groups else " (tous les groupes)"),
             "fontSize": 16,
-            "anchor": "start"
+            "anchor": "start",
+            "fontWeight": "normal"
         }
     ).configure_view(
         strokeWidth=0
