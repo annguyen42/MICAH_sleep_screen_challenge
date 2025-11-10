@@ -74,16 +74,33 @@ def plot_numerical_comparison(df, question_col, classifier_col, user_value):
     Crée un histogramme (barres) coloré par groupe, avec une ligne rouge 
     pour la réponse de l'utilisateur.
     """
+    # Ensure column names are safe for Vega-Lite/Altair by escaping colons
+    # We create a plotting copy where any column name containing ':' is replaced
+    # with an escaped version (backslash before colon) so Altair's "field:type"
+    # parsing does not break.
+    df_plot = df.copy()
+    col_map = {col: (col.replace(':', '\\:') if isinstance(col, str) and ':' in col else col)
+               for col in df_plot.columns}
+    # Only rename if necessary
+    if any(col_map[c] != c for c in col_map):
+        df_plot = df_plot.rename(columns=col_map)
+
+    q_field = col_map.get(question_col, question_col)
+    cls_field = col_map.get(classifier_col, classifier_col)
+
     # Graphique de base : Histogramme de toutes les réponses
-    base = alt.Chart(df).mark_bar().encode(
+    base = alt.Chart(df_plot).mark_bar().encode(
         # Axe X : La question numérique
-        x=alt.X(f"{question_col}:Q", bin=True, title=question_col),
+        x=alt.X(f"{q_field}:Q", bin=True, title=question_col),
         # Axe Y : Le nombre de réponses
         y=alt.Y('count()', title="Nombre de réponses"),
         # Couleur : Le type de répondant (ado, parent, etc.)
-        color=alt.Color(f"{classifier_col}:N", title="Type de répondant"),
-        # Tooltip (info-bulle) au survol
-        tooltip=[f"{question_col}:Q", 'count()', f"{classifier_col}:N"]
+        color=alt.Color(f"{cls_field}:N", title="Type de répondant"),
+        # Tooltip (info-bulle) au survol — use explicit Tooltip objects to keep
+        # readable titles while referencing the escaped field names
+        tooltip=[alt.Tooltip(q_field, type='quantitative', title=question_col),
+                 alt.Tooltip(cls_field, type='nominal', title=classifier_col),
+                 'count()']
     ).interactive()
 
     # Ligne rouge : une ligne verticale pour la réponse de l'utilisateur
@@ -99,27 +116,39 @@ def plot_categorical_comparison(df, question_col, classifier_col, user_value):
     Crée un graphique à barres pour les catégories, en surlignant
     la réponse de l'utilisateur.
     """
+    # Prepare a plotting copy with escaped column names (for colon-containing names)
+    df_plot = df.copy()
+    col_map = {col: (col.replace(':', '\\:') if isinstance(col, str) and ':' in col else col)
+               for col in df_plot.columns}
+    if any(col_map[c] != c for c in col_map):
+        df_plot = df_plot.rename(columns=col_map)
+
+    q_field = col_map.get(question_col, question_col)
+    cls_field = col_map.get(classifier_col, classifier_col)
+
     # Créer une condition : 1.0 (opaque) si c'est la réponse de l'utilisateur, 0.3 (transparent) sinon
     opacity_condition = alt.condition(
-        alt.datum[question_col] == user_value, 
-        alt.value(1.0), 
+        alt.datum[q_field] == user_value,
+        alt.value(1.0),
         alt.value(0.3)
     )
 
     # Graphique principal : barres empilées
-    chart = alt.Chart(df).mark_bar().encode(
+    chart = alt.Chart(df_plot).mark_bar().encode(
         # Axe X : La question catégorique
-        x=alt.X(f"{question_col}:N", title=question_col),
+        x=alt.X(f"{q_field}:N", title=question_col),
         # Axe Y : Le nombre de réponses
         y=alt.Y('count()', title="Nombre de réponses"),
         # Couleur : Le type de répondant (crée les piles)
-        color=alt.Color(f"{classifier_col}:N", title="Type de répondant"),
+        color=alt.Color(f"{cls_field}:N", title="Type de répondant"),
         
-        # !! L'AMÉLIORATION !! : Appliquer la condition d'opacité
+        # Appliquer la condition d'opacité
         opacity=opacity_condition,
         
-        # Tooltip
-        tooltip=[f"{question_col}:N", 'count()', f"{classifier_col}:N"]
+        # Tooltip — explicit fields
+        tooltip=[alt.Tooltip(q_field, type='nominal', title=question_col),
+                 alt.Tooltip(cls_field, type='nominal', title=classifier_col),
+                 'count()']
     ).interactive()
     
     return chart
