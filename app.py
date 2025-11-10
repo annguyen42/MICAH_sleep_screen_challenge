@@ -219,8 +219,8 @@ CLASSIFIER_COL = "Tu es :"
 IDENTIFIER_COL = "Choisis ton code secret"
 
 # Clean the classifier column
-all_data[CLASSIFIER_COL] = all_data[CLASSIFIER_COL].str.strip().str.lower()
-all_data = load_data(SHEET_URL)
+#all_data[CLASSIFIER_COL] = all_data[CLASSIFIER_COL].str.strip().str.lower()
+#all_data = load_data(SHEET_URL)
 
 
 SCALE_QUESTIONS = [
