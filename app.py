@@ -299,6 +299,7 @@ def plot_numerical_comparison(df, question_col, classifier_col, user_value, show
         fill_color = get_group_color(user_group) if user_group is not None else DEFAULT_COLOR
         color_encoding = alt.value(fill_color)
 
+    # For a grouped (dodged) histogram we use xOffset by classifier group
     bars = alt.Chart(histogram_data).mark_bar(
         cornerRadiusTopLeft=4,
         cornerRadiusTopRight=4,
@@ -313,7 +314,7 @@ def plot_numerical_comparison(df, question_col, classifier_col, user_value, show
                     grid=False
                 )),
         y=alt.Y('count:Q', 
-                stack='zero',
+                stack=None,
                 title="Nombre de réponses",
                 axis=alt.Axis(
                     titleFontSize=14,
@@ -322,6 +323,7 @@ def plot_numerical_comparison(df, question_col, classifier_col, user_value, show
                     gridOpacity=0.3
                 )),
         color=color_encoding,
+        xOffset=f"{cls_field}:N",
         opacity=alt.condition(
             alt.datum.is_user_value,
             alt.value(1.0),
@@ -343,7 +345,8 @@ def plot_numerical_comparison(df, question_col, classifier_col, user_value, show
         fillOpacity=0
     ).encode(
         x=alt.X('rounded_value:O'),
-        y=alt.Y('count:Q', stack='zero'),
+        y=alt.Y('count:Q', stack=None),
+        xOffset=f"{cls_field}:N",
         # use group color for border when highlighting
         color=alt.Color(f"{cls_field}:N", scale=color_scale, legend=None)
     )
@@ -604,6 +607,7 @@ def plot_categorical_comparison(df, question_col, classifier_col, user_value, sh
         color_encoding = alt.value(fill_color)
 
     # Enhanced bar chart
+    # Grouped (dodged) bars: use xOffset by classifier
     bars = alt.Chart(grouped).mark_bar(
         cornerRadiusTopLeft=4,
         cornerRadiusTopRight=4,
@@ -617,7 +621,7 @@ def plot_categorical_comparison(df, question_col, classifier_col, user_value, sh
                 )),
         y=alt.Y('count:Q', 
                 title="Nombre de réponses",
-                stack='zero',
+                stack=None,
                 axis=alt.Axis(
                     titleFontSize=14,
                     labelFontSize=12,
@@ -625,6 +629,7 @@ def plot_categorical_comparison(df, question_col, classifier_col, user_value, sh
                     gridOpacity=0.3
                 )),
         color=color_encoding,
+        xOffset=f"{cls_field}:N",
         opacity=alt.condition(
             alt.datum.is_user_response,
             alt.value(1.0),
@@ -647,7 +652,8 @@ def plot_categorical_comparison(df, question_col, classifier_col, user_value, sh
         fillOpacity=0
     ).encode(
         x=alt.X(f"{q_field}:N"),
-        y=alt.Y('count:Q', stack='zero'),
+        y=alt.Y('count:Q', stack=None),
+        xOffset=f"{cls_field}:N",
         color=alt.Color(f"{cls_field}:N", scale=color_scale, legend=None)
     )
     
@@ -658,7 +664,8 @@ def plot_categorical_comparison(df, question_col, classifier_col, user_value, sh
         fontWeight='bold'
     ).encode(
         x=alt.X(f"{q_field}:N"),
-        y=alt.Y('count:Q', stack='zero'),
+        y=alt.Y('count:Q', stack=None),
+        xOffset=f"{cls_field}:N",
         text=alt.Text('percentage:Q', format='.0f'),
         color=alt.value('white'),
         opacity=alt.condition(
