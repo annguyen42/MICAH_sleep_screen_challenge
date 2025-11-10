@@ -72,6 +72,55 @@ def get_color_scale(df, classifier_col):
     
     return alt.Scale(domain=domain, range=range_colors)
 
+
+def _normalize_text(s: str) -> str:
+    """Normalize text for robust matching: lowercase, remove accents, keep alphanumerics and spaces."""
+    import unicodedata, re
+    if pd.isna(s):
+        return ""
+    s = str(s).lower().strip()
+    s = unicodedata.normalize('NFD', s)
+    s = ''.join(ch for ch in s if not unicodedata.combining(ch))
+    # replace non-alphanumeric with space
+    s = re.sub(r'[^a-z0-9]+', ' ', s)
+    s = re.sub(r'\s+', ' ', s).strip()
+    return s
+
+
+def find_best_column(columns, question_text):
+    """Find the best matching column name for a question text.
+
+    Strategy:
+    - Normalize both side strings (remove punctuation/accents)
+    - Prefer exact substring matches
+    - Otherwise pick column with highest token overlap (simple heuristic)
+    """
+    q_norm = _normalize_text(question_text)
+    cols = list(columns)
+    best = None
+    best_score = 0
+    for col in cols:
+        c_norm = _normalize_text(col)
+        if not c_norm:
+            continue
+        # exact inclusion
+        if q_norm and (q_norm in c_norm or c_norm in q_norm):
+            return col
+        # token overlap
+        q_tokens = set(q_norm.split())
+        c_tokens = set(c_norm.split())
+        if not q_tokens or not c_tokens:
+            continue
+        overlap = len(q_tokens.intersection(c_tokens)) / max(len(q_tokens), len(c_tokens))
+        if overlap > best_score:
+            best_score = overlap
+            best = col
+
+    # require a reasonable overlap threshold to accept
+    if best_score >= 0.35:
+        return best
+    return None
+
 # Custom CSS for mobile optimization and better styling
 st.markdown("""
 <style>
@@ -328,21 +377,18 @@ def plot_numerical_comparison(df, question_col, classifier_col, user_value, show
 def is_yes_no_question(df, question_col):
     """Check if a question is a yes/no type question."""
     unique_values = df[question_col].dropna().unique()
-    yes_no_patterns = [
-        ['oui', 'non'],
-        ['yes', 'no'],
-        ['Oui', 'Non'],
-        ['OUI', 'NON']
-    ]
-    
-    # Check if values match yes/no patterns
+    # Normalize values
     values_lower = [str(v).lower().strip() for v in unique_values]
-    for pattern in yes_no_patterns:
-        if set(values_lower).issubset(set(pattern)):
+    values_normalized = [_normalize_text(v) for v in values_lower]
+
+    yes_no_sets = [set(['oui', 'non']), set(['yes', 'no']), set(['vrai', 'faux']), set(['true', 'false'])]
+    # if all observed normalized values are subset of any yes/no set -> yes/no question
+    for s in yes_no_sets:
+        if set(values_normalized).issubset(s):
             return True
-    
-    # Also check if it's binary with only 2 values
-    return len(unique_values) == 2
+
+    # fallback: binary question
+    return len(values_normalized) == 2
 
 def plot_pie_comparison(df, question_col, classifier_col, user_value, show_other_groups=True):
     """
@@ -358,74 +404,98 @@ def plot_pie_comparison(df, question_col, classifier_col, user_value, show_other
 
     # Get unique groups for creating multiple pie charts
     groups = sorted(df_plot[classifier_col].dropna().unique())
-    
+
     # Create charts for each group
     charts = []
-    
+
     for i, group in enumerate(groups):
         group_data = df_plot[df_plot[classifier_col] == group]
-        value_counts = group_data[question_col].value_counts()
-        
+        if group_data.empty:
+            continue
+
+        # Normalize responses (keep original for label)
+        resp_series = group_data[question_col].astype(str).str.strip()
+        value_counts = resp_series.value_counts()
+
         # Create data for this group's pie chart
         pie_data = []
         for value, count in value_counts.items():
+            norm_val = _normalize_text(value)
+            is_user_resp = False
+            try:
+                is_user_resp = _normalize_text(str(user_value)) == norm_val and group == user_group
+            except Exception:
+                is_user_resp = False
+
             pie_data.append({
                 'response': str(value),
-                'count': count,
-                'percentage': (count / len(group_data) * 100),
-                'is_user_response': value == user_value and group == user_group
+                'norm_response': norm_val,
+                'count': int(count),
+                'percentage': (int(count) / len(group_data) * 100) if len(group_data) > 0 else 0,
+                'is_user_response': is_user_resp
             })
-        
+
         pie_df = pd.DataFrame(pie_data)
-        
-        # Determine colors for yes/no
+        if pie_df.empty:
+            continue
+
+        # Determine colors for yes/no (based on normalized response)
         response_colors = {}
-        for response in pie_df['response'].unique():
-            response_lower = response.lower().strip()
-            if response_lower in ['oui', 'yes']:
-                response_colors[response] = '#2ECC71'  # Green
-            elif response_lower in ['non', 'no']:
-                response_colors[response] = '#E74C3C'  # Red
+        for norm_r, r in zip(pie_df['norm_response'], pie_df['response']):
+            if norm_r in ['oui', 'yes']:
+                response_colors[r] = '#2ECC71'  # Green
+            elif norm_r in ['non', 'no']:
+                response_colors[r] = '#E74C3C'  # Red
+            elif norm_r in ['vrai', 'faux', 'true', 'false']:
+                # map vrai->green, faux->red
+                if norm_r in ['vrai', 'true']:
+                    response_colors[r] = '#2ECC71'
+                else:
+                    response_colors[r] = '#E74C3C'
             else:
-                response_colors[response] = '#95A5A6'  # Gray for other
-        
+                response_colors[r] = '#95A5A6'  # Gray for other
+
         # Create pie chart for this group
-        base = alt.Chart(pie_df).mark_arc(
-            innerRadius=40,
-            stroke='white',
-            strokeWidth=2
-        ).encode(
-            theta=alt.Theta('count:Q'),
-            color=alt.Color('response:N',
-                           scale=alt.Scale(
-                               domain=list(response_colors.keys()),
-                               range=list(response_colors.values())
-                           ),
-                           legend=None if i > 0 else alt.Legend(
-                               orient='bottom',
-                               title='Réponse'
-                           )),
-            opacity=alt.condition(
-                alt.datum.is_user_response,
-                alt.value(1.0),
-                alt.value(0.7)
-            ),
-            tooltip=[
-                alt.Tooltip('response:N', title='Réponse'),
-                alt.Tooltip('count:Q', title='Nombre'),
-                alt.Tooltip('percentage:Q', title='Pourcentage', format='.1f')
-            ]
-        ).properties(
-            width=180,
-            height=180,
-            title={
-                "text": f"{get_group_icon(group)} {group}",
-                "color": get_group_color(group),
-                "fontSize": 14,
-                "fontWeight": "bold"
-            }
-        )
-        
+        try:
+            base = alt.Chart(pie_df).mark_arc(
+                innerRadius=40,
+                stroke='white',
+                strokeWidth=2
+            ).encode(
+                theta=alt.Theta('count:Q'),
+                color=alt.Color('response:N',
+                               scale=alt.Scale(
+                                   domain=list(response_colors.keys()),
+                                   range=list(response_colors.values())
+                               ),
+                               legend=None if i > 0 else alt.Legend(
+                                   orient='bottom',
+                                   title='Réponse'
+                               )),
+                opacity=alt.condition(
+                    alt.datum.is_user_response,
+                    alt.value(1.0),
+                    alt.value(0.85)
+                ),
+                tooltip=[
+                    alt.Tooltip('response:N', title='Réponse'),
+                    alt.Tooltip('count:Q', title='Nombre'),
+                    alt.Tooltip('percentage:Q', title='Pourcentage', format='.1f')
+                ]
+            ).properties(
+                width=180,
+                height=180,
+                title={
+                    "text": f"{get_group_icon(group)} {group}",
+                    "color": get_group_color(group),
+                    "fontSize": 14,
+                    "fontWeight": "bold"
+                }
+            )
+        except Exception:
+            # If chart creation fails for this group, skip it
+            continue
+
         # Add percentage labels
         labels = alt.Chart(pie_df).mark_text(
             radius=70,
@@ -436,7 +506,7 @@ def plot_pie_comparison(df, question_col, classifier_col, user_value, show_other
             theta=alt.Theta('count:Q'),
             text=alt.Text('percentage:Q', format='.0f')
         )
-        
+
         # Add response labels
         response_labels = alt.Chart(pie_df).mark_text(
             radius=100,
@@ -445,9 +515,9 @@ def plot_pie_comparison(df, question_col, classifier_col, user_value, show_other
             theta=alt.Theta('count:Q'),
             text='response:N'
         )
-        
+
         charts.append(base + labels + response_labels)
-    
+
     # Combine charts horizontally
     if len(charts) == 1:
         final_chart = charts[0]
@@ -458,7 +528,12 @@ def plot_pie_comparison(df, question_col, classifier_col, user_value, show_other
         final_chart = alt.vconcat(
             *[alt.hconcat(*charts[i:i+3]) for i in range(0, len(charts), 3)]
         )
-    
+
+    if len(charts) == 0:
+        # Fallback empty chart
+        empty_df = pd.DataFrame({'text': ['Aucune donnée disponible']})
+        return alt.Chart(empty_df).mark_text(fontSize=14).encode(text='text:N').properties()
+
     return final_chart.properties(
         title={
             "text": f"Répartition des réponses" + (" (ton groupe)" if not show_other_groups else " (tous les groupes)"),
@@ -662,15 +737,11 @@ if SCALE_QUESTIONS:
     st.markdown("### 📈 Questions sur une échelle (1-10)")
     
     for i, q_col in enumerate(SCALE_QUESTIONS):
-        # Try to find the question in the data with different encodings
-        actual_col = None
-        for col in all_data.columns:
-            if any(word in col for word in q_col.split()) and len([word for word in q_col.split() if word in col]) > 3:
-                actual_col = col
-                break
-        
+        # Find the best matching column for the question
+        actual_col = find_best_column(all_data.columns, q_col)
         if actual_col is None:
-            actual_col = q_col
+            # fallback to exact match if present
+            actual_col = q_col if q_col in all_data.columns else q_col
             
         with st.expander(f"📌 {q_col}", expanded=(i==0)):
             try:
@@ -710,18 +781,15 @@ if CATEGORY_QUESTIONS:
     st.markdown("### 📋 Questions à choix")
     
     for i, q_col in enumerate(CATEGORY_QUESTIONS):
-        # Try to find the question in the data with different encodings
-        actual_col = None
-        for col in all_data.columns:
-            if 'Scénario' in col and '22 h 30' in col:
-                actual_col = col
-                break
-            elif q_col in col or col in q_col:
-                actual_col = col
-                break
-        
+        # Find the best matching column for the question
+        actual_col = find_best_column(all_data.columns, q_col)
+
+        # Special handling for the scenario question which may have different spacing/format
+        if actual_col is None and 'scénario' in q_col.lower():
+            actual_col = next((col for col in all_data.columns if 'scénario' in col.lower() and '22' in col.lower()), None)
+
         if actual_col is None:
-            actual_col = q_col
+            actual_col = q_col if q_col in all_data.columns else q_col
         
         with st.expander(f"📌 {q_col}", expanded=(i==0)):
             try:
