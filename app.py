@@ -220,6 +220,8 @@ IDENTIFIER_COL = "Choisis ton code secret"
 
 # Clean the classifier column
 all_data[CLASSIFIER_COL] = all_data[CLASSIFIER_COL].str.strip().str.lower()
+all_data = load_data(SHEET_URL)
+
 
 SCALE_QUESTIONS = [
     "A quel point ton sommeil est-il réparateur ?",
