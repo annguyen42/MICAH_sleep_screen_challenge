@@ -34,7 +34,8 @@ st.set_page_config(
 )
 
 # Configuration - CSV link
-SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRCbQDPet7-hUdVO0-CzfC3KrhHY6JbUO4UlMpUwbJJ_cp2LhqJSnX34jD-xqZcFAmI4FZZcEg9Wsuj/pub?output=csv"
+#SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRCbQDPet7-hUdVO0-CzfC3KrhHY6JbUO4UlMpUwbJJ_cp2LhqJSnX34jD-xqZcFAmI4FZZcEg9Wsuj/pub?output=csv"
+SHEET_URL = "https://docs.google.com/spreadsheets/d/1Til8NWWAy1MVv5An3yUzXXEBSHocgzfe8SgkjcvKOmg/edit?usp=sharing"
 
 #endregion
 
