@@ -38,7 +38,7 @@ st.set_page_config(page_title="Etude MICAH", layout="centered")
 
 
 # Load service account info from secrets
-service_account_info = st.secrets["gcp_service_account"]
+service_account_info = st.secrets["gdrive_service_account"]
 
 credentials = Credentials.from_service_account_info(
     service_account_info,
