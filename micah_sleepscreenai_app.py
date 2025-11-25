@@ -490,7 +490,7 @@ with st.container():
         st.pyplot(fig)
         st.markdown("</div>", unsafe_allow_html=True)
 
-        if st.button("J'ai compris"):
+        if st.button("Continuer ➡️"):
             next_step()
             st.rerun()
     # endregion
