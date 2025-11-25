@@ -934,21 +934,21 @@ with st.container():
         st.markdown("""
         <div class='css-card'>
         <h3>👋 Tu as entre 11 et 15 ans ?</h3>
-        <p>Participe à Well-Play, une étude scientifique de l’UNIGE et de la HedS sur le lien entre jeux vidéo, bien-être et apprentissage –
-        que tu joues aux jeux vidéo ou pas.</p>
-        
-            ( - ) Pour tous les ados de 11 à 15 ans
-            ( - ) 40 CHF pour l’association écologique de ton choix
-            ( - ) Jusqu’à 60 CHF en bons Galaxus pour toi
-        
+        <p>Participe à Well-Play, une étude scientifique de l'UNIGE et de la HedS sur le lien entre jeux vidéo, bien-être et apprentissage – que tu joues aux jeux vidéo ou pas.</p>
+
+        <ul>
+            <li>Pour tous les ados de 11 à 15 ans</li>
+            <li>40 CHF pour l'association écologique de ton choix</li>
+            <li>Jusqu'à 60 CHF en bons Galaxus pour toi</li>
+        </ul>
+
         <h3>👨‍👩‍👧 Pour participer</h3>
         <p>Montre ce message à un de tes parents ou envoie-lui le lien sur WhatsApp (tu peux aussi le partager à un·e ami·e) :</p>
-    🔗 [https://well-play-teen.org](https://well-play-teen.org)
- 
-Pour toute question, contactez : [**wellplay@unige.ch**](mailto:wellplay@unige.ch)
-        
-    </div>
-        
+        <p>🔗 <a href="https://well-play-teen.org">https://well-play-teen.org</a></p>
+
+        <p>Pour toute question, contactez : <a href="mailto:wellplay@unige.ch"><strong>wellplay@unige.ch</strong></a></p>
+
+        </div>
         """, unsafe_allow_html=True)
 
 
