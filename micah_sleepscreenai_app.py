@@ -727,7 +727,7 @@ with st.container():
 
         st.markdown("<div class='css-card'>", unsafe_allow_html=True)
         st.markdown("#### Quelle fonctionnalité aimeriez-vous implémenter dans l'IA ? ?")
-        ai_feature = st.text_input()
+        ai_feature = st.text_input("Quelle fonctionnalité ...", key = "ai_feature")
 
         st.markdown("</div>", unsafe_allow_html=True)
 
@@ -782,7 +782,7 @@ with st.container():
 
             st.markdown("<div class='css-card'>", unsafe_allow_html=True)
             st.markdown("#### Laissez-nous vos remarques et commentaires :")
-            ai_comments = st.text_input()
+            ai_comments = st.text_input("Votre commentaire : ...", key="ai_comments")
 
             st.markdown("</div>", unsafe_allow_html=True)
 
