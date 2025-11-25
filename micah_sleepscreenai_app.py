@@ -739,8 +739,7 @@ with st.container():
     # ==========================
     # region STEP 15: SUBMIT
     # ==========================
-    # Todo
-    # put this viz after AI and feeling
+
     elif st.session_state.step == 15:
         st.progress(100)
         st.title("❤️ IA & Émotions")
