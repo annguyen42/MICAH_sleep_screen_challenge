@@ -367,8 +367,9 @@ with st.container():
     elif st.session_state.step == 2:
         st.progress(6)
         st.title("Habitudes de Sommeil")
-        st.image("https://images.unsplash.com/photo-1526506118085-60ce8714f8c5?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80", use_container_width=True)
-        
+        #st.image("https://images.unsplash.com/photo-1526506118085-60ce8714f8c5?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80", use_container_width=True)
+        st.image(".images/sommeil_ecran.jpg", use_container_width=True)
+
         st.markdown("<div class='css-card'>", unsafe_allow_html=True)
         st.markdown("#### Regardez-vous des écrans avant de dormir ?")
         screens = st.radio("", ["Jamais", "Parfois", "Souvent", "Tous les soirs"], index=None)
