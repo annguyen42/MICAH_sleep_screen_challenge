@@ -649,9 +649,9 @@ with st.container():
 
 
     # ==========================
-    # region STEP 10: AI level of concern scale
+    # region STEP 11: AI level of concern scale
     # ==========================
-    elif st.session_state.step == 10:
+    elif st.session_state.step == 11:
         st.progress(66)
         st.title("L'Intelligence Artificielle")
         st.image(
@@ -675,9 +675,9 @@ with st.container():
     # endregion
 
     # ==========================
-    # region STEP 11: AI Concern Items
+    # region STEP 12: AI Concern Items
     # ==========================
-    elif st.session_state.step == 11:
+    elif st.session_state.step == 12:
         st.progress(72)
         st.title("L'Intelligence Artificielle")
         st.image(
@@ -704,9 +704,9 @@ with st.container():
     # endregion
 
     # ==========================
-    # region STEP 12: AI Responsible People
+    # region STEP 13: AI Responsible People
     # ==========================
-    elif st.session_state.step == 12:
+    elif st.session_state.step == 13:
         st.progress(78)
         st.title("L'Intelligence Artificielle")
         st.image(
@@ -739,9 +739,9 @@ with st.container():
     # endregion
 
     # ==========================
-    # region STEP 13: AI Features
+    # region STEP 14: AI Features
     # ==========================
-    elif st.session_state.step == 13:
+    elif st.session_state.step == 14:
         st.progress(84)
         st.title("L'Intelligence Artificielle")
         st.image(
@@ -761,9 +761,9 @@ with st.container():
     # endregion
 
     # ==========================
-    # region STEP 14: AI Prevention Campaign
+    # region STEP 15: AI Prevention Campaign
     # ==========================
-    elif st.session_state.step == 14:
+    elif st.session_state.step == 15:
         st.progress(90)
         st.title("L'Intelligence Artificielle")
         st.image(
@@ -794,9 +794,9 @@ with st.container():
     # endregion
 
     # ==========================
-    # region STEP 15: Give comment
+    # region STEP 16: Give comment
     # ==========================
-    elif st.session_state.step == 15:
+    elif st.session_state.step == 16:
         st.progress(96)
         st.title("Exprimez-vous")
         st.image(
@@ -816,9 +816,9 @@ with st.container():
     # endregion
 
     # ==========================
-    # region STEP 16: SUBMIT
+    # region STEP 17: SUBMIT
     # =========================
-    elif st.session_state.step == 16:
+    elif st.session_state.step == 17:
         # Recruitment
         st.markdown("""
         <div class='css-card' style='border: 1px solid #FF4B4B;'>
@@ -842,9 +842,9 @@ with st.container():
                     st.error("Erreur de sauvegarde.")
 
     # ==========================
-    # region STEP 16: Ad and see results
+    # region STEP 18: Ad and see results
     # ==========================
-    elif st.session_state.step == 21:
+    elif st.session_state.step == 18:
         st.progress(100)
         st.title("Vos résultats")
 
