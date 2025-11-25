@@ -374,7 +374,7 @@ with st.container():
         screens = st.radio("", ["Jamais", "Parfois", "Souvent", "Tous les soirs"], index=None)
         st.markdown("</div>", unsafe_allow_html=True)
 
-        if st.button("Valider ma réponse"):
+        if st.button("Continuer ➡️"):
             if screens:
                 st.session_state.responses['Screen_Habit'] = screens
                 next_step()
@@ -491,7 +491,7 @@ with st.container():
             ai_other_text = st.text_input("Précisez pour 'Autre' :")
         st.markdown("</div>", unsafe_allow_html=True)
 
-        if st.button("Valider"):
+        if st.button("Continuer ➡️"):
             final_purpose_list = [p for p in ai_purpose if p != "Autre"]
             if ai_other_text: final_purpose_list.append(ai_other_text) # Just store text for wordcloud later
             
@@ -569,7 +569,7 @@ with st.container():
             ai_other_text = st.text_input("Précisez pour 'Autre' :")
         st.markdown("</div>", unsafe_allow_html=True)
 
-        if st.button("Valider"):
+        if st.button("Continuer ➡️"):
             final_purpose_list = [p for p in ai_benefit if p != "Autre"]
             if ai_other_text: final_purpose_list.append(ai_other_text)  # Just store text for wordcloud later
 
@@ -599,7 +599,7 @@ with st.container():
             st.write("**Les IA apporteront toujours des avantages**")
 
 
-        if st.button("Valider"):
+        if st.button("Continuer ➡️"):
             st.session_state.responses['AI_Benefit_Scale'] = ai_benefit_scale
             next_step()
             st.rerun()
@@ -619,7 +619,7 @@ with st.container():
         chatgpt_feelings = st.radio("", ["Oui", "Non", "Je ne sais pas"], horizontal=True)
         st.markdown("</div>", unsafe_allow_html=True)
 
-        if st.button("Valider"):
+        if st.button("Continuer ➡️"):
             st.session_state.responses['ChatGPT_Feelings'] = chatgpt_feelings
             next_step()
             st.rerun()
@@ -645,7 +645,7 @@ with st.container():
         with col3:
             st.write("**Les IA me causent beaucoup d'inquiétude**")
 
-        if st.button("Valider"):
+        if st.button("Continuer ➡️"):
             st.session_state.responses['AI_Concern_Scale'] = ai_concern_scale
             next_step()
             st.rerun()
@@ -671,7 +671,7 @@ with st.container():
             ai_other_text = st.text_input("Précisez pour 'Autre' :")
         st.markdown("</div>", unsafe_allow_html=True)
 
-        if st.button("Valider"):
+        if st.button("Continuer ➡️"):
             final_purpose_list = [p for p in ai_concern_items if p != "Autre"]
             if ai_other_text: final_purpose_list.append(ai_other_text)  # Just store text for wordcloud later
 
@@ -706,7 +706,7 @@ with st.container():
             ai_other_text = st.text_input("Précisez pour 'Autre' :")
         st.markdown("</div>", unsafe_allow_html=True)
 
-        if st.button("Valider"):
+        if st.button("Continuer ➡️"):
             final_purpose_list = [p for p in ai_responsible_people if p != "Autre"]
             if ai_other_text: final_purpose_list.append(ai_other_text)  # Just store text for wordcloud later
 
@@ -731,7 +731,7 @@ with st.container():
 
         st.markdown("</div>", unsafe_allow_html=True)
 
-        if st.button("Valider"):
+        if st.button("Continuer ➡️"):
             st.session_state.responses['AI_Feature'] = ai_feature
             next_step()
             st.rerun()
@@ -761,7 +761,7 @@ with st.container():
             ai_other_text = st.text_input("Précisez pour 'Autre' :")
         st.markdown("</div>", unsafe_allow_html=True)
 
-        if st.button("Valider"):
+        if st.button("Continuer ➡️"):
             final_purpose_list = [p for p in ai_prevention_campaign if p != "Autre"]
             if ai_other_text: final_purpose_list.append(ai_other_text)  # Just store text for wordcloud later
 
@@ -786,7 +786,7 @@ with st.container():
 
             st.markdown("</div>", unsafe_allow_html=True)
 
-            if st.button("Valider"):
+            if st.button("Continuer ➡️"):
                 st.session_state.responses['AI_Comments'] = ai_comments
                 next_step()
                 st.rerun()
