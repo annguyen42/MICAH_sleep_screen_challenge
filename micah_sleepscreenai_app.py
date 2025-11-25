@@ -595,9 +595,37 @@ with st.container():
     # endregion
 
     # ==========================
-    # region STEP 7: AI benefit
+    # region STEP 7: Ad intermediate
     # ==========================
     elif st.session_state.step == 7:
+        st.progress(33)
+        st.title("Participez à l'étude Well-Play")
+
+    # --- Texte Streamlit ---
+        st.markdown("""
+        📱Joue pour la science et soutiens la planète!
+
+        Rejoins l’étude Well-Play sur les jeux vidéo, le bien-être et l’apprentissage.
+
+        🎁 Jusqu’à 60 CHF en bons Galaxus pour toi et 40 CHF pour une asso écologique de ton choix
+
+        ✅ **Demande à un parent de t'y inscrire: **:**
+
+        🔗 [https://well-play-teen.org](https://well-play-teen.org)
+
+        Pour toute question, contactez : [**wellplay@unige.ch**](mailto:wellplay@unige.ch)
+        """, unsafe_allow_html=True)
+
+        # See results
+        if st.button("Continuer ➡️"):
+            next_step()
+            st.rerun()
+
+
+    # ==========================
+    # region STEP 8: AI benefit
+    # ==========================
+    elif st.session_state.step == 8:
         st.progress(36)
         st.title("Bénéfices des Intelligences Artificielles")
         st.image(
@@ -624,9 +652,9 @@ with st.container():
     # endregion
 
     # ==========================
-    # region STEP 8: AI benefit scale
+    # region STEP 9: AI benefit scale
     # ==========================
-    elif st.session_state.step == 8:
+    elif st.session_state.step == 9:
         st.progress(42)
         st.title("Avantages des Intelligences Artificielles")
         st.image(
@@ -651,9 +679,9 @@ with st.container():
     # endregion
 
     # ==========================
-    # region STEP 9: FEELINGS QUESTION
+    # region STEP 10: FEELINGS QUESTION
     # ==========================
-    elif st.session_state.step == 9:
+    elif st.session_state.step == 10:
         st.progress(48)
         st.title("Emotions & Intelligences Artificielles")
         st.image("https://images.unsplash.com/photo-1516387938699-a93567ec168e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80", use_container_width=True)
@@ -669,10 +697,10 @@ with st.container():
     # endregion
 
     # ==========================
-    # region STEP 10: IA feeling viz
+    # region STEP 11: IA feeling viz
     # ==========================
 
-    elif st.session_state.step == 10:
+    elif st.session_state.step == 11:
         st.progress(60)
         st.title("Émotions & IA")
 
@@ -695,9 +723,9 @@ with st.container():
 
 
     # ==========================
-    # region STEP 11: AI level of concern scale
+    # region STEP 12: AI level of concern scale
     # ==========================
-    elif st.session_state.step == 11:
+    elif st.session_state.step == 12:
         st.progress(66)
         st.title("Préoccupation des Intelligence Artificielles")
         st.image(
@@ -720,9 +748,9 @@ with st.container():
     # endregion
 
     # ==========================
-    # region STEP 12: AI Concern Items
+    # region STEP 13: AI Concern Items
     # ==========================
-    elif st.session_state.step == 12:
+    elif st.session_state.step == 13:
         st.progress(72)
         st.title("Inquiétudes et Intelligences Artificielles")
         st.image(
@@ -748,9 +776,9 @@ with st.container():
     # endregion
 
     # ==========================
-    # region STEP 13: AI Responsible People
+    # region STEP 14: AI Responsible People
     # ==========================
-    elif st.session_state.step == 13:
+    elif st.session_state.step == 14:
         st.progress(78)
         st.title("Responsabilité & Intelligences Artificielles")
         st.image(
@@ -782,9 +810,9 @@ with st.container():
     # endregion
 
     # ==========================
-    # region STEP 14: AI Features
+    # region STEP 15: AI Features
     # ==========================
-    elif st.session_state.step == 14:
+    elif st.session_state.step == 15:
         st.progress(84)
         st.title("Fonctionnalité & Intelligences Artificielles")
         st.image(
@@ -802,9 +830,9 @@ with st.container():
     # endregion
 
     # ==========================
-    # region STEP 15: AI Prevention Campaign
+    # region STEP 16: AI Prevention Campaign
     # ==========================
-    elif st.session_state.step == 15:
+    elif st.session_state.step == 16:
         st.progress(90)
         st.title("Prévention & Intelligences Artificielles")
         st.image(
@@ -833,9 +861,9 @@ with st.container():
     # endregion
 
     # ==========================
-    # region STEP 16: Give comment
+    # region STEP 17: Give comment
     # ==========================
-    elif st.session_state.step == 16:
+    elif st.session_state.step == 17:
         st.progress(96)
         st.title("Exprimez-vous")
         st.image(
@@ -853,9 +881,9 @@ with st.container():
     # endregion
 
     # ==========================
-    # region STEP 17: SUBMIT
+    # region STEP 18: SUBMIT
     # =========================
-    elif st.session_state.step == 17:
+    elif st.session_state.step == 18:
         # Recruitment
         # st.markdown("""
         # <div class='css-card' style='border: 1px solid #FF4B4B;'>
@@ -884,31 +912,36 @@ with st.container():
                         st.error("Erreur de sauvegarde.")
         else:
             # Data has been submitted, show success message
-            st.image("https://i.imgur.com/0dZ8ZqZ.png", use_container_width=True)
             st.success("Merci ! Vos réponses ont été enregistrées.")
             st.balloons()
+            next_step()
+            st.rerun()
 
-            if st.button("Accéder à mes réponses"):
-                next_step()
-                st.rerun()
+            #if st.button("Accéder à mes réponses"):
+            #if st.button("Terminer"):
+             #   next_step()
+              #  st.rerun()
 
     # ==========================
-    # region STEP 18: Ad final
+    # region STEP 19: Ad final
     # ==========================
-    elif st.session_state.step == 18:
+    elif st.session_state.step == 19:
         st.progress(100)
         st.title("Vos réponses")
 
 
         # --- Texte Streamlit ---
         st.markdown("""
-        📱Joue pour la science et soutiens la planète!
- 
-        Rejoins l’étude Well-Play sur les jeux vidéo, le bien-être et l’apprentissage.
- 
-        🎁 Jusqu’à 60 CHF en bons Galaxus pour toi et 40 CHF pour une asso écologique de ton choix
-    
-        ✅ **Demande à un parent de t'y inscrire: **:**
+        👋 Tu as entre 11 et 15 ans ?
+        Participe à Well-Play, une étude scientifique de l’UNIGE et de la HedS sur le lien entre jeux vidéo, bien-être et apprentissage –
+        que tu joues aux jeux vidéo ou pas.
+        
+        - Pour tous les ados de 11 à 15 ans
+        - 40 CHF pour l’association écologique de ton choix
+        - Jusqu’à 60 CHF en bons Galaxus pour toi
+        
+        👨‍👩‍👧 **Pour participer**
+        Montre ce message à un de tes parents ou envoie-lui le lien sur WhatsApp (tu peux aussi le partager à un·e ami·e) :
     
         🔗 [https://well-play-teen.org](https://well-play-teen.org)
     
