@@ -599,7 +599,7 @@ with st.container():
     # ==========================
     elif st.session_state.step == 7:
         st.progress(33)
-        st.title("Participez à l'étude Well-Play")
+        st.title("Participe à l'étude Well-Play")
 
     # --- Texte Streamlit ---
         st.markdown("""
@@ -884,13 +884,6 @@ with st.container():
     # region STEP 18: SUBMIT
     # =========================
     elif st.session_state.step == 18:
-        # Recruitment
-        # st.markdown("""
-        # <div class='css-card' style='border: 1px solid #FF4B4B;'>
-        #     [cite_start]<h4>🎮 Étude Well-Play</h4>
-        #     <p>Nous cherchons des jeunes de 11 à 15 ans. Contact: wellplay@unige.ch</p>
-        # </div>
-        # """, unsafe_allow_html=True)
         st.image("./images/image_accueil.png", use_container_width=True)
 
         # Initialize a flag to track if data was already submitted
