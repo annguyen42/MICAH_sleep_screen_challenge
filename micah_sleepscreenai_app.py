@@ -824,12 +824,12 @@ with st.container():
     # =========================
     elif st.session_state.step == 17:
         # Recruitment
-        st.markdown("""
-        <div class='css-card' style='border: 1px solid #FF4B4B;'>
-            [cite_start]<h4>🎮 Étude Well-Play</h4>
-            <p>Nous cherchons des jeunes de 11 à 15 ans. Contact: wellplay@unige.ch</p>
-        </div>
-        """, unsafe_allow_html=True)
+        # st.markdown("""
+        # <div class='css-card' style='border: 1px solid #FF4B4B;'>
+        #     [cite_start]<h4>🎮 Étude Well-Play</h4>
+        #     <p>Nous cherchons des jeunes de 11 à 15 ans. Contact: wellplay@unige.ch</p>
+        # </div>
+        # """, unsafe_allow_html=True)
         
         if st.button("Envoyer mes réponses"):
             with st.spinner("Envoi en cours..."):
@@ -855,15 +855,6 @@ with st.container():
         st.progress(100)
         st.title("Vos réponses")
 
-
-        # Recruitment
-        # st.markdown("""
-        #     <div class='css-card' style='border: 1px solid #FF4B4B;'>
-        #         [cite_start]<h4>🎮 Étude Well-Play</h4>
-        #         <p>Nous cherchons des jeunes de 11 à 15 ans. Contact: wellplay@unige.ch</p>
-        #     </div>
-        #     """, unsafe_allow_html=True)
-
         # --- Texte Streamlit ---
         st.markdown("""
         📱Joue pour la science et soutiens la planète!
@@ -881,5 +872,13 @@ with st.container():
 
        # See results
         if st.button("Voir les résultats"):
-            next_step()
-            st.rerun()
+            st.title("Résumé de vos réponses")
+            st.markdown("### Voici un aperçu de ce que vous avez répondu :")
+
+            #df = pd.DataFrame.from_dict(st.session_state.responses, orient='index', columns=['Réponse'])
+            #st.dataframe(df)
+
+            if st.button("Terminer"):
+                st.session_state.step = 1
+                st.session_state.responses = {}
+                st.rerun()
