@@ -655,13 +655,11 @@ with st.container():
     # ==========================
     elif st.session_state.step == 9:
         st.progress(48)
-        st.title("Finalisation")
-        st.image("https://images.unsplash.com/photo-1516387938699-a93567ec168e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80", use_container_width=True) #
-
-
-        st.markdown("<div class='css-card'>", unsafe_allow_html=True)
-        st.markdown("#### Avez-vous déjà parlé de vos sentiments avec une IA ? [cite: 129]")
-        chatgpt_feelings = st.radio("", ["Oui", "Non", "Je ne sais pas"], horizontal=True)
+        st.title("Emotions & Intelligences Artificielles")
+        st.image("https://images.unsplash.com/photo-1516387938699-a93567ec168e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80", use_container_width=True)
+        #st.markdown("<div class='css-card'>", unsafe_allow_html=True)
+        st.markdown("#### Avez-vous déjà parlé de vos sentiments avec une IA ?")
+        chatgpt_feelings = st.radio("", ["Oui", "Non", "Je ne sais pas"], horizontal=False)
         st.markdown("</div>", unsafe_allow_html=True)
 
         if st.button("Continuer ➡️"):
