@@ -945,18 +945,13 @@ with st.container():
         
         <h4>👨‍👩‍👧 **Pour participer**</h4>
         <p>Montre ce message à un de tes parents ou envoie-lui le lien sur WhatsApp (tu peux aussi le partager à un·e ami·e) :</p>
-    
-        <p>🔗 <a href="https://well-play-teen.org" target="_blank" style="color: #4A90E2;">https://well-play-teen.org</a></p>
-
-        <p>Pour toute question, contactez : <a href="mailto:wellplay@unige.ch" style="color: #4A90E2;">wellplay@unige.ch</a></p>
+    🔗 [https://well-play-teen.org](https://well-play-teen.org)
+    Pour toute question, contactez: [ ** wellplay @ unige.ch **](mailto:wellplay @ unige.ch)
+        
     </div>
         
         """, unsafe_allow_html=True)
-        # 🔗 [https: // well - play - teen.org](https: // well-play-teen.org)
-        #
-        # Pour
-        # toute
-        # question, contactez: [ ** wellplay @ unige.ch **](mailto:wellplay @ unige.ch)
+
 
        # See results
         if st.button("Voir les résultats"):
