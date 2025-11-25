@@ -341,9 +341,9 @@ with st.container():
     # region STEP 1: ID
     # ==========================
     if st.session_state.step == 1:
-        st.image("https://i.imgur.com/8Q8Q2Zq.png", use_container_width=True)
-        st.title("Défi Écrans & Sommeil")
-        st.markdown("<div class='css-card'>", unsafe_allow_html=True)
+        st.image("./images/image_accueil.png", use_container_width=True)
+        st.title("Partage ton avis sur le sommeil, les écrans et les IA")
+        #st.markdown("<div class='css-card'>", unsafe_allow_html=True)
         st.markdown("### 1. Identifiez-vous")
         code = st.text_input("Choisissez un pseudo (ex: PIZZA99)")
         role = st.radio("Vous êtes :", ["Ado (11-17 ans)", "Adulte"], index=None)
