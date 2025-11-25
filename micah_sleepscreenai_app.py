@@ -47,7 +47,9 @@ credentials = Credentials.from_service_account_info(
 
 client = gspread.authorize(credentials)
 
-sheet = client.open_by_key("1ifQbsvd439slcLIXVlsb0pn0GbAsVMhALHp0hluQS28").worksheet("Reponses")
+SHEET_ID = "1ifQbsvd439slcLIXVlsb0pn0GbAsVMhALHp0hluQS28"
+WORKSHEET_NAME = "Reponses"
+#sheet = client.open_by_key("1ifQbsvd439slcLIXVlsb0pn0GbAsVMhALHp0hluQS28").worksheet("Reponses")
 # endregion
 
 # region --- 2. CSS DESIGN ---
@@ -99,42 +101,80 @@ st.markdown("""
 # endregion
 
 # region --- 3. LOAD DATA ---
-def load_data():
+@st.cache_data(ttl=0)
+#def load_data():
+def load_data(sheet_id, worksheet_name, gspread_client):
     """Reads the Google Sheet to get data for the graphs."""
+
+    # V1
+    # try:
+    #     conn = st.connection("gsheets", type=GSheetsConnection)
+    #     # ttl=0 ensures we get fresh data every time we reload
+    #     df = conn.read(worksheet="Reponses", ttl=0)
+    #     return df
+    # except Exception as e:
+    #     return pd.DataFrame()
+
+    # V2
     try:
-        conn = st.connection("gsheets", type=GSheetsConnection)
-        # ttl=0 ensures we get fresh data every time we reload
-        df = conn.read(worksheet="Reponses", ttl=0)
+        # Re-authorize the sheet using the client passed to the function
+        sheet = gspread_client.open_by_key(sheet_id).worksheet(worksheet_name)
+
+        # Get all records as a list of dicts
+        data = sheet.get_all_records()
+
+        df = pd.DataFrame(data)
         return df
     except Exception as e:
+        st.error(f"Erreur de chargement des données: {e}")
         return pd.DataFrame()
 # endregion
 
 # region--- 3. UTILS FUNCTIONS ---
-def save_data_securely(new_data_dict):
-    """Reads current data, appends new row, and writes everything back."""
+def save_data_securely(new_data_dict, sheet_id, worksheet_name, gspread_client):
+    """Appends a new row to the Google Sheet."""
     try:
-        conn = st.connection("gsheets", type=GSheetsConnection)
-        
-        # 1. Read existing data (No Cache)
-        existing_data = conn.read(worksheet="Reponses", ttl=0)
-        
-        # 2. Create new row
-        new_row = pd.DataFrame([new_data_dict])
-        
-        # 3. Combine old + new
-        # If existing_data is empty, we just start with new_row
-        if existing_data.empty:
-            updated_df = new_row
-        else:
-            updated_df = pd.concat([existing_data, new_row], ignore_index=True)
-        
-        # 4. Write back to sheet
-        conn.update(worksheet="Reponses", data=updated_df)
+        sheet = gspread_client.open_by_key(sheet_id).worksheet(worksheet_name)
+
+        # gspread.append_row expects a list of values, in the order of the columns.
+        # You'll need to define the exact list of column names (headers)
+        # to ensure the data is written correctly.
+
+        # Example: Ensure all columns are present, fill missing ones with None/""
+        header = list(new_data_dict.keys())  # Or, define your full list of expected column names
+        values_to_append = [new_data_dict.get(col, "") for col in header]  # Get values in order
+
+        sheet.append_row(values_to_append, value_input_option='USER_ENTERED')
+
         return True
     except Exception as e:
         st.error(f"Erreur de sauvegarde: {e}")
         return False
+
+#def save_data_securely(new_data_dict):
+    """Reads current data, appends new row, and writes everything back."""
+    # try:
+    #     conn = st.connection("gsheets", type=GSheetsConnection)
+    #
+    #     # 1. Read existing data (No Cache)
+    #     existing_data = conn.read(worksheet="Reponses", ttl=0)
+    #
+    #     # 2. Create new row
+    #     new_row = pd.DataFrame([new_data_dict])
+    #
+    #     # 3. Combine old + new
+    #     # If existing_data is empty, we just start with new_row
+    #     if existing_data.empty:
+    #         updated_df = new_row
+    #     else:
+    #         updated_df = pd.concat([existing_data, new_row], ignore_index=True)
+    #
+    #     # 4. Write back to sheet
+    #     conn.update(worksheet="Reponses", data=updated_df)
+    #     return True
+    # except Exception as e:
+    #     st.error(f"Erreur de sauvegarde: {e}")
+    #     return False
     
 def get_real_counts(df, category, column, options):
     """Filters the dataframe by category and counts responses for specific options."""
@@ -313,7 +353,8 @@ with st.container():
             if code and role:
                 st.session_state.responses['Secret_Code'] = code
                 st.session_state.responses['Category'] = role
-                st.session_state.sheet_data = load_data()
+                #st.session_state.sheet_data = load_data()
+                st.session_state.sheet_data = load_data(SHEET_ID, WORKSHEET_NAME, client)
                 next_step()
                 st.rerun()
             else:
@@ -791,7 +832,7 @@ with st.container():
 
                 # Add timestamp
                 st.session_state.responses['Timestamp'] = datetime.now().isoformat()
-                success = save_data_securely(st.session_state.responses)
+                success = save_data_securely(st.session_state.responses, SHEET_ID, WORKSHEET_NAME, client)
                 if success:
                     st.image("https://i.imgur.com/0dZ8ZqZ.png", use_container_width=True)
                     st.success("Merci ! Vos réponses ont été enregistrées.")
