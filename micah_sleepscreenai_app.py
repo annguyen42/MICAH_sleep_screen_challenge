@@ -351,14 +351,39 @@ with st.container():
 
         if st.button("Commencer"):
             if code and role:
-                st.session_state.responses['Secret_Code'] = code
-                st.session_state.responses['Category'] = role
-                #st.session_state.sheet_data = load_data()
+                # Load the data to check for existing pseudos
                 st.session_state.sheet_data = load_data(SHEET_ID, WORKSHEET_NAME, client)
-                next_step()
-                st.rerun()
+
+                # Check if the pseudo already exists
+                if 'Secret_Code' in st.session_state.sheet_data.columns:
+                    existing_codes = st.session_state.sheet_data['Secret_Code'].astype(str).str.upper()
+                    if code.upper() in existing_codes.values:
+                        st.error("Ce pseudo est déjà pris. Veuillez en choisir un autre.")
+                    else:
+                        # Pseudo is available, proceed
+                        st.session_state.responses['Secret_Code'] = code
+                        st.session_state.responses['Category'] = role
+                        next_step()
+                        st.rerun()
+                else:
+                    # If column doesn't exist yet (empty sheet), proceed
+                    st.session_state.responses['Secret_Code'] = code
+                    st.session_state.responses['Category'] = role
+                    next_step()
+                    st.rerun()
             else:
                 st.warning("Veuillez remplir tous les champs.")
+
+        # if st.button("Commencer"):
+        #     if code and role:
+        #         st.session_state.responses['Secret_Code'] = code
+        #         st.session_state.responses['Category'] = role
+        #         #st.session_state.sheet_data = load_data()
+        #         st.session_state.sheet_data = load_data(SHEET_ID, WORKSHEET_NAME, client)
+        #         next_step()
+        #         st.rerun()
+        #     else:
+        #         st.warning("Veuillez remplir tous les champs.")
     # endregion
 
     # ==========================
@@ -367,7 +392,6 @@ with st.container():
     elif st.session_state.step == 2:
         st.progress(6)
         st.title("Habitudes de Sommeil")
-        #st.image("https://images.unsplash.com/photo-1526506118085-60ce8714f8c5?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80", use_container_width=True)
         st.image("./images/sommeil_ecran.jpg", use_container_width=True)
 
         st.markdown("<div class='css-card'>", unsafe_allow_html=True)
@@ -486,7 +510,7 @@ with st.container():
         ai_freq = st.radio("", options=["Jamais", "Rarement", "Hebdomadaire", "Souvent", "Tous les jours"])
 
         st.markdown("#### Dans quel but ?", unsafe_allow_html=True)
-        ai_purpose = st.multiselect("", ["Travail / Devoirs", "Loisir", "Recherche d'info", "Compagnon virtuel", "Soutien psychologique", "Autre"])
+        ai_purpose = st.multiselect("", ["Travail / Devoirs", "Loisirs", "Recherche d'info", "Compagnon virtuel", "Soutien psychologique", "Autre"])
         
         ai_other_text = ""
         if "Autre" in ai_purpose:
@@ -528,9 +552,10 @@ with st.container():
         
         # Wordcloud logic (Safe default)
         st.markdown("<div class='css-card'><h4>Nuage de mots</h4>", unsafe_allow_html=True)
-        #text_base = "Travail Devoirs Recherche Fun Loisir "
+        #text_base = "Travail Devoirs Recherche Fun Loisirs "
         #text = text_base + st.session_state.responses.get('AI_Wordcloud_Input', '') * 5
-        text = st.session_state.responses.get('AI_Wordcloud_Input', '') * 5
+        #text = st.session_state.responses.get('AI_Wordcloud_Input', '') * 5
+        text = st.session_state.responses.get('AI_Wordcloud_Input', '')
 
         wordcloud = WordCloud(width=800, height=400, background_color='#1E1E1E', colormap='Blues').generate(text)
         fig_wc, ax = plt.subplots()
