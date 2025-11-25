@@ -549,19 +549,38 @@ with st.container():
         st.markdown("</div>", unsafe_allow_html=True)
         # ---------------------------
         
-        # Wordcloud logic (Safe default)
+        # Wordcloud logic - Aggregate ALL responses
         st.markdown("<div class='css-card'><h4>Nuage de mots</h4>", unsafe_allow_html=True)
-        #text_base = "Travail Devoirs Recherche Fun Loisirs "
-        #text = text_base + st.session_state.responses.get('AI_Wordcloud_Input', '') * 5
         #text = st.session_state.responses.get('AI_Wordcloud_Input', '') * 5
-        text = st.session_state.responses.get('AI_Wordcloud_Input', '')
+        #text = st.session_state.responses.get('AI_Wordcloud_Input', '')
 
-        wordcloud = WordCloud(width=800, height=400, background_color='#1E1E1E', colormap='Blues').generate(text)
-        fig_wc, ax = plt.subplots()
-        ax.imshow(wordcloud, interpolation='bilinear')
-        ax.axis("off")
-        fig_wc.patch.set_facecolor('#1E1E1E')
-        st.pyplot(fig_wc)
+        # Get all AI_Wordcloud_Input responses from the sheet
+        if not st.session_state.sheet_data.empty and 'AI_Wordcloud_Input' in st.session_state.sheet_data.columns:
+            # Filter by user's category (optional - remove if you want ALL responses regardless of category)
+            filtered_df = st.session_state.sheet_data[
+                st.session_state.sheet_data['Category'].astype(str).str.contains(user_role[:3], case=False, na=False)
+            ]
+
+            # Combine all text from the column
+            all_text = ' '.join(filtered_df['AI_Wordcloud_Input'].dropna().astype(str).tolist())
+
+            # Add current user's response
+            all_text += ' ' + st.session_state.responses.get('AI_Wordcloud_Input', '')
+        else:
+            # Fallback to just current user's response if sheet is empty
+            all_text = st.session_state.responses.get('AI_Wordcloud_Input', 'Travail Loisirs')
+
+        # Generate wordcloud
+        if all_text.strip():  # Only generate if there's text
+            wordcloud = WordCloud(width=800, height=400, background_color='#1E1E1E', colormap='Blues').generate(all_text)
+            fig_wc, ax = plt.subplots()
+            ax.imshow(wordcloud, interpolation='bilinear')
+            ax.axis("off")
+            fig_wc.patch.set_facecolor('#1E1E1E')
+            st.pyplot(fig_wc)
+        else:
+            st.info("Pas encore assez de données pour générer un nuage de mots.")
+
         st.markdown("</div>", unsafe_allow_html=True)
 
         col1, col2 = st.columns(2)
