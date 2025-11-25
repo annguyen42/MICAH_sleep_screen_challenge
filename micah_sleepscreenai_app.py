@@ -103,7 +103,7 @@ st.markdown("""
 # region --- 3. LOAD DATA ---
 @st.cache_data(ttl=0)
 #def load_data():
-def load_data(sheet_id, worksheet_name, gspread_client):
+def load_data(sheet_id, worksheet_name, _gspread_client):
     """Reads the Google Sheet to get data for the graphs."""
 
     # V1
@@ -118,7 +118,7 @@ def load_data(sheet_id, worksheet_name, gspread_client):
     # V2
     try:
         # Re-authorize the sheet using the client passed to the function
-        sheet = gspread_client.open_by_key(sheet_id).worksheet(worksheet_name)
+        sheet = _gspread_client.open_by_key(sheet_id).worksheet(worksheet_name)
 
         # Get all records as a list of dicts
         data = sheet.get_all_records()
@@ -131,10 +131,10 @@ def load_data(sheet_id, worksheet_name, gspread_client):
 # endregion
 
 # region--- 3. UTILS FUNCTIONS ---
-def save_data_securely(new_data_dict, sheet_id, worksheet_name, gspread_client):
+def save_data_securely(new_data_dict, sheet_id, worksheet_name, _gspread_client):
     """Appends a new row to the Google Sheet."""
     try:
-        sheet = gspread_client.open_by_key(sheet_id).worksheet(worksheet_name)
+        sheet = _gspread_client.open_by_key(sheet_id).worksheet(worksheet_name)
 
         # gspread.append_row expects a list of values, in the order of the columns.
         # You'll need to define the exact list of column names (headers)
