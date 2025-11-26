@@ -995,57 +995,57 @@ with st.container():
                 return category
         # endregion
 
-        # # region Graph Functions
-        # # Fonction pour créer un graphique Likert
-        # def create_likert_chart(data, question_col, title, participant_answer=None):
-        #     """
-        #     Crée un graphique Likert horizontal
-        #     """
-        #     # Compter les réponses
-        #     counts = data[question_col].value_counts()
-        #
-        #     # Calculer les pourcentages
-        #     percentages = (counts / len(data)) * 100
-        #
-        #     # Créer le graphique
-        #     fig, ax = plt.subplots(figsize=(12, 6))
-        #
-        #     # Définir les couleurs pour l'échelle Likert (du négatif au positif)
-        #     colors = ['#d32f2f', '#f57c00', '#fbc02d', '#388e3c']  # Rouge, Orange, Jaune, Vert
-        #
-        #     # Créer les barres horizontales
-        #     bars = ax.barh(range(len(counts)), percentages.values,
-        #                    color=colors[:len(counts)], alpha=0.7, edgecolor='black', linewidth=1)
-        #
-        #     # Mettre en évidence la réponse du participant si elle existe
-        #     if participant_answer is not None and participant_answer in counts.index:
-        #         participant_idx = list(counts.index).index(participant_answer)
-        #         bars[participant_idx].set_edgecolor('red')
-        #         bars[participant_idx].set_linewidth(3)
-        #         bars[participant_idx].set_alpha(1.0)
-        #
-        #     # Personnaliser le graphique
-        #     ax.set_yticks(range(len(counts)))
-        #     ax.set_yticklabels(counts.index, fontsize=11)
-        #     ax.set_xlabel('Pourcentage des réponses (%)', fontsize=12, fontweight='bold')
-        #     ax.set_title(title, fontsize=14, fontweight='bold', pad=20)
-        #
-        #     # Ajouter les valeurs sur les barres
-        #     for i, (bar, count, pct) in enumerate(zip(bars, counts.values, percentages.values)):
-        #         ax.text(bar.get_width() + 1, bar.get_y() + bar.get_height() / 2,
-        #                 f'{count} ({pct:.1f}%)',
-        #                 ha='left', va='center', fontweight='bold', fontsize=10)
-        #
-        #     # Améliorer l'apparence
-        #     ax.set_xlim(0, max(percentages.values) * 1.2)
-        #     ax.grid(axis='x', alpha=0.3, linestyle='--')
-        #     ax.spines['top'].set_visible(False)
-        #     ax.spines['right'].set_visible(False)
-        #
-        #     plt.tight_layout()
-        #     return fig
-        #
-        #
+        # region Graph Functions
+        # Fonction pour créer un graphique Likert
+        def create_likert_chart(data, question_col, title, participant_answer=None):
+            """
+            Crée un graphique Likert horizontal
+            """
+            # Compter les réponses
+            counts = data[question_col].value_counts()
+
+            # Calculer les pourcentages
+            percentages = (counts / len(data)) * 100
+
+            # Créer le graphique
+            fig, ax = plt.subplots(figsize=(12, 6))
+
+            # Définir les couleurs pour l'échelle Likert (du négatif au positif)
+            colors = ['#d32f2f', '#f57c00', '#fbc02d', '#388e3c']  # Rouge, Orange, Jaune, Vert
+
+            # Créer les barres horizontales
+            bars = ax.barh(range(len(counts)), percentages.values,
+                           color=colors[:len(counts)], alpha=0.7, edgecolor='black', linewidth=1)
+
+            # Mettre en évidence la réponse du participant si elle existe
+            if participant_answer is not None and participant_answer in counts.index:
+                participant_idx = list(counts.index).index(participant_answer)
+                bars[participant_idx].set_edgecolor('red')
+                bars[participant_idx].set_linewidth(3)
+                bars[participant_idx].set_alpha(1.0)
+
+            # Personnaliser le graphique
+            ax.set_yticks(range(len(counts)))
+            ax.set_yticklabels(counts.index, fontsize=11)
+            ax.set_xlabel('Pourcentage des réponses (%)', fontsize=12, fontweight='bold')
+            ax.set_title(title, fontsize=14, fontweight='bold', pad=20)
+
+            # Ajouter les valeurs sur les barres
+            for i, (bar, count, pct) in enumerate(zip(bars, counts.values, percentages.values)):
+                ax.text(bar.get_width() + 1, bar.get_y() + bar.get_height() / 2,
+                        f'{count} ({pct:.1f}%)',
+                        ha='left', va='center', fontweight='bold', fontsize=10)
+
+            # Améliorer l'apparence
+            ax.set_xlim(0, max(percentages.values) * 1.2)
+            ax.grid(axis='x', alpha=0.3, linestyle='--')
+            ax.spines['top'].set_visible(False)
+            ax.spines['right'].set_visible(False)
+
+            plt.tight_layout()
+            return fig
+
+
         # # Fonction pour créer un graphique d'échelle numérique
         # def create_numeric_scale_chart(data, question_col, title, participant_answer=None):
         #     """
