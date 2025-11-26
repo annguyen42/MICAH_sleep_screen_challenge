@@ -967,7 +967,7 @@ with st.container():
         @st.cache_data(ttl=60)
         def load_data_to_see_results():
             #SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRCbQDPet7-hUdVO0-CzfC3KrhHY6JbUO4UlMpUwbJJ_cp2LhqJSnX34jD-xqZcFAmI4FZZcEg9Wsuj/pub?output=csv"
-            SHEET_URL = "https://docs.google.com/spreadsheets/d/1ifQbsvd439slcLIXVlsb0pn0GbAsVMhALHp0hluQS28/edit?usp=sharing"
+            SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSPTS9isgo2apuzJ0KIZlAaPFeuo4tKQX2ocfvo6iIeBPifyOACKlyzGb4tePNflmNDr8jgtze4wia1/pub?gid=0&single=true&output=csv"
             df = pd.read_csv(SHEET_URL)
             # Convertir la colonne Timestamp en datetime
             #df['Timestamp'] = pd.to_datetime(df['Timestamp'], format='%m/%d/%Y %H:%M:%S')
