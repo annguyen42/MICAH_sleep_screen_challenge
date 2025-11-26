@@ -980,21 +980,21 @@ with st.container():
         # Charger les données
         df = load_data_to_see_results()
         # endregion
-        #
-        # # region Utils Functions
-        #
-        # # Simplifier les labels pour l'affichage
-        # def simplify_category(category):
-        #     if pd.isna(category):
-        #         return "Non spécifié"
-        #     elif "ado" in category.lower():
-        #         return "Adolescents (11-17 ans)"
-        #     elif "adulte" in category.lower():
-        #         return "Adultes"
-        #     else:
-        #         return category
-        # # endregion
-        #
+
+        # region Utils Functions
+
+        # Simplifier les labels pour l'affichage
+        def simplify_category(category):
+            if pd.isna(category):
+                return "Non spécifié"
+            elif "ado" in category.lower():
+                return "Adolescents (11-17 ans)"
+            elif "adulte" in category.lower():
+                return "Adultes"
+            else:
+                return category
+        # endregion
+
         # # region Graph Functions
         # # Fonction pour créer un graphique Likert
         # def create_likert_chart(data, question_col, title, participant_answer=None):
