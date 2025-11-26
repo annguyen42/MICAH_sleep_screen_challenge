@@ -21,6 +21,8 @@ from datetime import datetime
 import gspread
 from google.oauth2.service_account import Credentials
 from collections import Counter
+from wordcloud import WordCloud
+import re
 # endregion
 
 # region Test de connexion (à supprimer après test)
@@ -1571,6 +1573,135 @@ with st.container():
                 st.write(df.columns.tolist())
 
         # endregion
+
+        # region Word Cloud des fonctionnalités IA souhaitées
+        st.subheader("☁️ Fonctionnalités IA souhaitées - Nuages de mots")
+
+        ai_features_column = 'Quelle fonctionnalité aimeriez-vous implémenter dans l\'IA ?'
+
+        if ai_features_column in df.columns and age_category_column in df.columns:
+
+            # Vérifier s'il y a des données
+            valid_responses = df[(df[ai_features_column].notna()) & (df[age_category_column].notna())]
+
+            if len(valid_responses) > 0:
+                # Compter les réponses par groupe
+                def simplify_category(category):
+                    if pd.isna(category):
+                        return "Non spécifié"
+                    elif "ado" in category.lower():
+                        return "Adolescents"
+                    elif "adulte" in category.lower():
+                        return "Adultes"
+                    else:
+                        return category
+
+
+                valid_responses_copy = valid_responses.copy()
+                valid_responses_copy['Groupe_Simple'] = valid_responses_copy[age_category_column].apply(
+                    simplify_category)
+
+                group_counts = valid_responses_copy['Groupe_Simple'].value_counts()
+                adolescents_count = group_counts.get('Adolescents', 0)
+                adultes_count = group_counts.get('Adultes', 0)
+
+                # Afficher les statistiques
+                st.write("**📊 Statistiques des réponses :**")
+                col1, col2, col3 = st.columns(3)
+
+                with col1:
+                    st.metric("🧑‍🎓 Adolescents", adolescents_count)
+                with col2:
+                    st.metric("👨‍👩‍👧‍👦 Adultes", adultes_count)
+                with col3:
+                    st.metric("📝 Total", len(valid_responses))
+
+                # Créer les word clouds
+                wc_adolescents, wc_adultes = create_wordcloud_comparison(df, ai_features_column, age_category_column)
+
+                # Afficher les word clouds
+                fig = plot_wordclouds(wc_adolescents, wc_adultes, adolescents_count, adultes_count)
+                if fig is not None:
+                    st.pyplot(fig)
+
+                    # Ajouter des explications
+                    st.write("**💡 Comment lire ces nuages de mots :**")
+                    st.write("- Plus un mot est **grand**, plus il apparaît fréquemment dans les réponses")
+                    st.write("- Les couleurs **orange** représentent les réponses des adolescents")
+                    st.write("- Les couleurs **bleues** représentent les réponses des adultes")
+
+                    # Afficher quelques réponses exemples si le participant a un code valide
+                    if valid_code and participant_data is not None:
+                        participant_response = participant_data[ai_features_column]
+                        if pd.notna(participant_response):
+                            st.info(f"🎯 **Ta réponse :** {participant_response}")
+
+                # Optionnel: Afficher les réponses les plus fréquentes
+                st.subheader("🔤 Mots les plus fréquents")
+
+
+                # Analyser les mots les plus fréquents pour chaque groupe
+                def get_top_words(text_series, top_n=10):
+                    if len(text_series) == 0:
+                        return []
+
+                    # Combiner tout le texte
+                    all_text = ' '.join(text_series.astype(str).str.lower())
+
+                    # Extraire les mots (supprimer la ponctuation)
+                    words = re.findall(r'\b\w+\b', all_text)
+
+                    # Filtrer les mots trop courts ou communs
+                    stop_words = {'le', 'la', 'les', 'un', 'une', 'des', 'et', 'ou', 'de', 'du', 'dans', 'avec', 'pour',
+                                  'sur',
+                                  'par', 'que', 'qui', 'ce', 'cette', 'ces', 'je', 'tu', 'il', 'elle', 'nous', 'vous',
+                                  'ils',
+                                  'elles', 'mon', 'ma', 'mes', 'ton', 'ta', 'tes', 'son', 'sa', 'ses', 'à', 'au', 'aux'}
+                    filtered_words = [word for word in words if len(word) > 2 and word not in stop_words]
+
+                    # Compter les occurrences
+                    word_counts = Counter(filtered_words)
+                    return word_counts.most_common(top_n)
+
+
+                adolescents_data = valid_responses_copy[valid_responses_copy['Groupe_Simple'] == 'Adolescents'][
+                    ai_features_column]
+                adultes_data = valid_responses_copy[valid_responses_copy['Groupe_Simple'] == 'Adultes'][
+                    ai_features_column]
+
+                col1, col2 = st.columns(2)
+
+                with col1:
+                    if len(adolescents_data) > 0:
+                        st.write("**🧑‍🎓 Top mots - Adolescents :**")
+                        top_words_ados = get_top_words(adolescents_data, 8)
+                        for i, (word, count) in enumerate(top_words_ados, 1):
+                            st.write(f"{i}. **{word}** ({count} fois)")
+
+                with col2:
+                    if len(adultes_data) > 0:
+                        st.write("**👨‍👩‍👧‍👦 Top mots - Adultes :**")
+                        top_words_adultes = get_top_words(adultes_data, 8)
+                        for i, (word, count) in enumerate(top_words_adultes, 1):
+                            st.write(f"{i}. **{word}** ({count} fois)")
+
+            else:
+                st.warning("Aucune réponse valide trouvée pour cette question")
+        else:
+            st.error(f"Colonnes requises non trouvées :")
+            if ai_features_column not in df.columns:
+                st.write(f"- '{ai_features_column}' non trouvée")
+            if age_category_column not in df.columns:
+                st.write(f"- '{age_category_column}' non trouvée")
+
+            st.write("Colonnes disponibles :")
+            st.write(
+                [col for col in df.columns if
+                 'fonctionnalité' in col.lower() or 'implémenter' in col.lower() or 'IA' in col])
+
+        # endregion
+
+
 
         if st.button("Terminer"):
             st.session_state.step = 1
