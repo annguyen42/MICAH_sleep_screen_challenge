@@ -1389,12 +1389,12 @@ with st.container():
         valid_code = False
 
         if secret_code:
-            if secret_code in df["Choisis ton code secret"].values:
+            if secret_code in df["Secret_Code"].values:
                 st.success("Code secret valide! Tu peux voir tes résultats.")
-                participant_data = df[df["Choisis ton code secret"] == secret_code].iloc[0]
+                participant_data = df[df["Secret_Code"] == secret_code].iloc[0]
                 valid_code = True
             else:
-                st.error("Code secret invalide. Vérifie ton code et réessaie.")
+                st.error("Code secret invalide. Vérifie ton code et réessaye.")
 
         # endregion
         #
