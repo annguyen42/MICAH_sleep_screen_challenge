@@ -1296,89 +1296,89 @@ with st.container():
             return adolescents_counts, adultes_counts
 
 
-        # def plot_donut_charts(adolescents_counts, adultes_counts):
-        #     """
-        #     Affiche les graphiques en donut côte à côte
-        #     """
-        #     # Vérifier s'il y a des données
-        #     if not adolescents_counts and not adultes_counts:
-        #         st.warning("Aucune donnée disponible pour créer les graphiques")
-        #         return None
-        #
-        #     # Déterminer le nombre de graphiques à afficher
-        #     charts_to_show = []
-        #     if adolescents_counts:
-        #         charts_to_show.append(('Adolescents', adolescents_counts, '#ff7f50'))
-        #     if adultes_counts:
-        #         charts_to_show.append(('Adultes', adultes_counts, '#4682b4'))
-        #
-        #     if len(charts_to_show) == 0:
-        #         return None
-        #
-        #     # Créer la figure
-        #     if len(charts_to_show) == 1:
-        #         fig, ax = plt.subplots(1, 1, figsize=(10, 8))
-        #         axes = [ax]
-        #     else:
-        #         fig, axes = plt.subplots(1, 2, figsize=(16, 8))
-        #
-        #     for i, (group_name, counts, base_color) in enumerate(charts_to_show):
-        #         ax = axes[i] if len(charts_to_show) > 1 else axes[0]
-        #
-        #         # Préparer les données pour le graphique
-        #         labels = list(counts.keys())
-        #         sizes = list(counts.values())
-        #         total_responses = sum(sizes)
-        #
-        #         # Tronquer les labels trop longs pour l'affichage
-        #         display_labels = []
-        #         for label in labels:
-        #             if len(label) > 30:
-        #                 display_labels.append(label[:27] + "...")
-        #             else:
-        #                 display_labels.append(label)
-        #
-        #         # Créer une palette de couleurs basée sur la couleur de base
-        #         if base_color == '#ff7f50':  # Orange pour adolescents
-        #             colors = plt.cm.Oranges(np.linspace(0.4, 0.8, len(sizes)))
-        #         else:  # Bleu pour adultes
-        #             colors = plt.cm.Blues(np.linspace(0.4, 0.8, len(sizes)))
-        #
-        #         # Créer le donut chart
-        #         wedges, texts, autotexts = ax.pie(
-        #             sizes,
-        #             labels=display_labels,
-        #             colors=colors,
-        #             autopct=lambda pct: f'{pct:.1f}%\n({int(pct / 100 * total_responses)})',
-        #             startangle=90,
-        #             pctdistance=0.85,
-        #             wedgeprops=dict(width=0.5, edgecolor='white', linewidth=2)
-        #         )
-        #
-        #         # Personnaliser le texte
-        #         for autotext in autotexts:
-        #             autotext.set_color('black')
-        #             autotext.set_fontweight('bold')
-        #             autotext.set_fontsize(9)
-        #
-        #         for text in texts:
-        #             text.set_fontsize(10)
-        #             text.set_fontweight('bold')
-        #
-        #         # Ajouter le titre avec emoji approprié
-        #         emoji = "🧑‍🎓" if group_name == "Adolescents" else "👨‍👩‍👧‍👦"
-        #         ax.set_title(f'{emoji} {group_name}\n({total_responses} réponses)',
-        #                      fontsize=14, fontweight='bold', pad=20)
-        #
-        #         # Ajouter le texte au centre du donut
-        #         ax.text(0, 0, f'{total_responses}\nréponses',
-        #                 horizontalalignment='center', verticalalignment='center',
-        #                 fontsize=12, fontweight='bold',
-        #                 bbox=dict(boxstyle="round,pad=0.3", facecolor='white', alpha=0.8))
-        #
-        #     plt.tight_layout()
-        #     return fig
-        # # endregion
+        def plot_donut_charts(adolescents_counts, adultes_counts):
+            """
+            Affiche les graphiques en donut côte à côte
+            """
+            # Vérifier s'il y a des données
+            if not adolescents_counts and not adultes_counts:
+                st.warning("Aucune donnée disponible pour créer les graphiques")
+                return None
+
+            # Déterminer le nombre de graphiques à afficher
+            charts_to_show = []
+            if adolescents_counts:
+                charts_to_show.append(('Adolescents', adolescents_counts, '#ff7f50'))
+            if adultes_counts:
+                charts_to_show.append(('Adultes', adultes_counts, '#4682b4'))
+
+            if len(charts_to_show) == 0:
+                return None
+
+            # Créer la figure
+            if len(charts_to_show) == 1:
+                fig, ax = plt.subplots(1, 1, figsize=(10, 8))
+                axes = [ax]
+            else:
+                fig, axes = plt.subplots(1, 2, figsize=(16, 8))
+
+            for i, (group_name, counts, base_color) in enumerate(charts_to_show):
+                ax = axes[i] if len(charts_to_show) > 1 else axes[0]
+
+                # Préparer les données pour le graphique
+                labels = list(counts.keys())
+                sizes = list(counts.values())
+                total_responses = sum(sizes)
+
+                # Tronquer les labels trop longs pour l'affichage
+                display_labels = []
+                for label in labels:
+                    if len(label) > 30:
+                        display_labels.append(label[:27] + "...")
+                    else:
+                        display_labels.append(label)
+
+                # Créer une palette de couleurs basée sur la couleur de base
+                if base_color == '#ff7f50':  # Orange pour adolescents
+                    colors = plt.cm.Oranges(np.linspace(0.4, 0.8, len(sizes)))
+                else:  # Bleu pour adultes
+                    colors = plt.cm.Blues(np.linspace(0.4, 0.8, len(sizes)))
+
+                # Créer le donut chart
+                wedges, texts, autotexts = ax.pie(
+                    sizes,
+                    labels=display_labels,
+                    colors=colors,
+                    autopct=lambda pct: f'{pct:.1f}%\n({int(pct / 100 * total_responses)})',
+                    startangle=90,
+                    pctdistance=0.85,
+                    wedgeprops=dict(width=0.5, edgecolor='white', linewidth=2)
+                )
+
+                # Personnaliser le texte
+                for autotext in autotexts:
+                    autotext.set_color('black')
+                    autotext.set_fontweight('bold')
+                    autotext.set_fontsize(9)
+
+                for text in texts:
+                    text.set_fontsize(10)
+                    text.set_fontweight('bold')
+
+                # Ajouter le titre avec emoji approprié
+                emoji = "🧑‍🎓" if group_name == "Adolescents" else "👨‍👩‍👧‍👦"
+                ax.set_title(f'{emoji} {group_name}\n({total_responses} réponses)',
+                             fontsize=14, fontweight='bold', pad=20)
+
+                # Ajouter le texte au centre du donut
+                ax.text(0, 0, f'{total_responses}\nréponses',
+                        horizontalalignment='center', verticalalignment='center',
+                        fontsize=12, fontweight='bold',
+                        bbox=dict(boxstyle="round,pad=0.3", facecolor='white', alpha=0.8))
+
+            plt.tight_layout()
+            return fig
+        # endregion
         #
         # # region Section pour le code secret
         # st.subheader("🔒 Validation du code secret")
