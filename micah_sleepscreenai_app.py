@@ -1102,70 +1102,70 @@ with st.container():
             return fig
 
 
-        # # Fonction pour créer un graphique de comparaison par catégorie d'âge
-        # def create_age_category_comparison_chart(data, question_col, category_col, title):
-        #     """
-        #     Crée un graphique comparant les réponses entre adolescents et adultes
-        #     """
-        #     # Filtrer les données valides (réponses de 1 à 10)
-        #     valid_data = data[
-        #         (data[question_col].between(1, 10)) &
-        #         (data[category_col].notna())
-        #         ].copy()
-        #
-        #     if len(valid_data) == 0:
-        #         return None
-        #
-        #     valid_data['Groupe_Simple'] = valid_data[category_col].apply(simplify_category)
-        #
-        #     # Calculer les moyennes par groupe
-        #     avg_by_group = valid_data.groupby('Groupe_Simple')[question_col].agg(['mean', 'count', 'std']).round(2)
-        #
-        #     # fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 6))
-        #     fig, ax1 = plt.subplots(1, 1, figsize=(16, 10))
-        #
-        #     # Graphique 1: Moyennes par groupe avec barres d'erreur
-        #     colors = ['#ff7f50', '#4682b4']  # Orange pour ados, Bleu pour adultes
-        #     bars1 = ax1.bar(avg_by_group.index, avg_by_group['mean'],
-        #                     color=colors[:len(avg_by_group)], alpha=0.7,
-        #                     edgecolor='black', linewidth=1,
-        #                     yerr=avg_by_group['std'], capsize=5)
-        #
-        #     ax1.set_ylabel('Niveau moyen de préoccupation', fontsize=11, fontweight='bold')
-        #     ax1.set_title('Niveau moyen de préoccupation par groupe', fontsize=12, fontweight='bold')
-        #     ax1.set_ylim(0, 10)
-        #     ax1.grid(axis='y', alpha=0.3, linestyle='--')
-        #
-        #     # Rotation des labels si nécessaire
-        #     ax1.tick_params(axis='x', rotation=45)
-        #
-        #     # Ajouter les valeurs sur les barres
-        #     for i, (bar, (idx, row)) in enumerate(zip(bars1, avg_by_group.iterrows())):
-        #         ax1.text(bar.get_x() + bar.get_width() / 2, bar.get_height() + 0.2,
-        #                  f'{row["mean"]:.1f}\n(n={int(row["count"])})',
-        #                  ha='center', va='bottom', fontweight='bold', fontsize=10)
-        #
-        #     # Graphique 2: Distribution détaillée
-        #     # groups = valid_data['Groupe_Simple'].unique()
-        #     # if len(groups) >= 2:
-        #     #     data_by_group = [valid_data[valid_data['Groupe_Simple'] == group][question_col]
-        #     #                      for group in sorted(groups)]
-        #     #
-        #     #     bins = np.arange(0.5, 11.5, 1)
-        #     #     ax2.hist(data_by_group, bins=bins, alpha=0.7,
-        #     #              label=sorted(groups), color=colors[:len(groups)],
-        #     #              edgecolor='black')
-        #     #     ax2.set_xlabel('Niveau de préoccupation', fontsize=11, fontweight='bold')
-        #     #     ax2.set_ylabel('Nombre de réponses', fontsize=11, fontweight='bold')
-        #     #     ax2.set_title('Distribution des réponses par groupe', fontsize=12, fontweight='bold')
-        #     #     ax2.set_xticks(range(1, 11))
-        #     #     ax2.legend()
-        #     #     ax2.grid(axis='y', alpha=0.3, linestyle='--')
-        #
-        #     plt.tight_layout()
-        #     return fig
-        #
-        #
+        # Fonction pour créer un graphique de comparaison par catégorie d'âge
+        def create_age_category_comparison_chart(data, question_col, category_col, title):
+            """
+            Crée un graphique comparant les réponses entre adolescents et adultes
+            """
+            # Filtrer les données valides (réponses de 1 à 10)
+            valid_data = data[
+                (data[question_col].between(1, 10)) &
+                (data[category_col].notna())
+                ].copy()
+
+            if len(valid_data) == 0:
+                return None
+
+            valid_data['Groupe_Simple'] = valid_data[category_col].apply(simplify_category)
+
+            # Calculer les moyennes par groupe
+            avg_by_group = valid_data.groupby('Groupe_Simple')[question_col].agg(['mean', 'count', 'std']).round(2)
+
+            # fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 6))
+            fig, ax1 = plt.subplots(1, 1, figsize=(16, 10))
+
+            # Graphique 1: Moyennes par groupe avec barres d'erreur
+            colors = ['#ff7f50', '#4682b4']  # Orange pour ados, Bleu pour adultes
+            bars1 = ax1.bar(avg_by_group.index, avg_by_group['mean'],
+                            color=colors[:len(avg_by_group)], alpha=0.7,
+                            edgecolor='black', linewidth=1,
+                            yerr=avg_by_group['std'], capsize=5)
+
+            ax1.set_ylabel('Niveau moyen de préoccupation', fontsize=11, fontweight='bold')
+            ax1.set_title('Niveau moyen de préoccupation par groupe', fontsize=12, fontweight='bold')
+            ax1.set_ylim(0, 10)
+            ax1.grid(axis='y', alpha=0.3, linestyle='--')
+
+            # Rotation des labels si nécessaire
+            ax1.tick_params(axis='x', rotation=45)
+
+            # Ajouter les valeurs sur les barres
+            for i, (bar, (idx, row)) in enumerate(zip(bars1, avg_by_group.iterrows())):
+                ax1.text(bar.get_x() + bar.get_width() / 2, bar.get_height() + 0.2,
+                         f'{row["mean"]:.1f}\n(n={int(row["count"])})',
+                         ha='center', va='bottom', fontweight='bold', fontsize=10)
+
+            # Graphique 2: Distribution détaillée
+            # groups = valid_data['Groupe_Simple'].unique()
+            # if len(groups) >= 2:
+            #     data_by_group = [valid_data[valid_data['Groupe_Simple'] == group][question_col]
+            #                      for group in sorted(groups)]
+            #
+            #     bins = np.arange(0.5, 11.5, 1)
+            #     ax2.hist(data_by_group, bins=bins, alpha=0.7,
+            #              label=sorted(groups), color=colors[:len(groups)],
+            #              edgecolor='black')
+            #     ax2.set_xlabel('Niveau de préoccupation', fontsize=11, fontweight='bold')
+            #     ax2.set_ylabel('Nombre de réponses', fontsize=11, fontweight='bold')
+            #     ax2.set_title('Distribution des réponses par groupe', fontsize=12, fontweight='bold')
+            #     ax2.set_xticks(range(1, 11))
+            #     ax2.legend()
+            #     ax2.grid(axis='y', alpha=0.3, linestyle='--')
+
+            plt.tight_layout()
+            return fig
+
+
         # # Fonction pour créer comparaison de wordcloud graphique
         # def create_wordcloud_comparison(data, text_col, category_col):
         #     """
