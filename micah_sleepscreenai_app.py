@@ -1222,45 +1222,45 @@ with st.container():
             return wc_adolescents, wc_adultes
 
 
-        # def plot_wordclouds(wc_adolescents, wc_adultes, adolescents_count, adultes_count):
-        #     """
-        #     Affiche les word clouds côte à côte
-        #     """
-        #     # Déterminer le nombre de subplots nécessaires
-        #     valid_clouds = sum([wc_adolescents is not None, wc_adultes is not None])
-        #
-        #     if valid_clouds == 0:
-        #         st.warning("Aucun word cloud ne peut être généré - données textuelles insuffisantes")
-        #         return None
-        #
-        #     if valid_clouds == 1:
-        #         fig, ax = plt.subplots(1, 1, figsize=(12, 6))
-        #         axes = [ax]
-        #     else:
-        #         fig, axes = plt.subplots(1, 2, figsize=(16, 8))
-        #
-        #     current_ax = 0
-        #
-        #     # Word cloud des adolescents
-        #     if wc_adolescents is not None:
-        #         axes[current_ax].imshow(wc_adolescents, interpolation='bilinear')
-        #         axes[current_ax].set_title(f'🧑‍🎓 Adolescents (n={adolescents_count})',
-        #                                    fontsize=14, fontweight='bold', color='#ff7f50')
-        #         axes[current_ax].axis('off')
-        #         current_ax += 1
-        #
-        #     # Word cloud des adultes
-        #     if wc_adultes is not None:
-        #         ax_index = current_ax if valid_clouds == 2 else 0
-        #         axes[ax_index].imshow(wc_adultes, interpolation='bilinear')
-        #         axes[ax_index].set_title(f'👨‍👩‍👧‍👦 Adultes (n={adultes_count})',
-        #                                  fontsize=14, fontweight='bold', color='#4682b4')
-        #         axes[ax_index].axis('off')
-        #
-        #     plt.tight_layout()
-        #     return fig
-        #
-        #
+        def plot_wordclouds(wc_adolescents, wc_adultes, adolescents_count, adultes_count):
+            """
+            Affiche les word clouds côte à côte
+            """
+            # Déterminer le nombre de subplots nécessaires
+            valid_clouds = sum([wc_adolescents is not None, wc_adultes is not None])
+
+            if valid_clouds == 0:
+                st.warning("Aucun word cloud ne peut être généré - données textuelles insuffisantes")
+                return None
+
+            if valid_clouds == 1:
+                fig, ax = plt.subplots(1, 1, figsize=(12, 6))
+                axes = [ax]
+            else:
+                fig, axes = plt.subplots(1, 2, figsize=(16, 8))
+
+            current_ax = 0
+
+            # Word cloud des adolescents
+            if wc_adolescents is not None:
+                axes[current_ax].imshow(wc_adolescents, interpolation='bilinear')
+                axes[current_ax].set_title(f'🧑‍🎓 Adolescents (n={adolescents_count})',
+                                           fontsize=14, fontweight='bold', color='#ff7f50')
+                axes[current_ax].axis('off')
+                current_ax += 1
+
+            # Word cloud des adultes
+            if wc_adultes is not None:
+                ax_index = current_ax if valid_clouds == 2 else 0
+                axes[ax_index].imshow(wc_adultes, interpolation='bilinear')
+                axes[ax_index].set_title(f'👨‍👩‍👧‍👦 Adultes (n={adultes_count})',
+                                         fontsize=14, fontweight='bold', color='#4682b4')
+                axes[ax_index].axis('off')
+
+            plt.tight_layout()
+            return fig
+
+
         # def create_donut_comparison(data, question_col, category_col):
         #     """
         #     Crée des graphiques en donut comparatifs pour adolescents et adultes
