@@ -529,7 +529,7 @@ with st.container():
         st.title("Utilisation des Intelligences Artificielles (IA)")
         st.image("https://images.unsplash.com/photo-1620712943543-bcc4688e7485?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80", use_container_width=True) # 
 
-        st.markdown("#### A quelle fréquence utilisez-vous l'IA ?")
+        st.markdown("#### A quelle fréquence utilisez-vous les IA ?")
         #ai_freq = st.select_slider("", options=["Jamais", "Rarement", "Hebdomadaire", "Souvent", "Tous les jours"])
         ai_freq = st.radio("", options=["Jamais", "Rarement", "Hebdomadaire", "Souvent", "Tous les jours"])
 
@@ -696,7 +696,7 @@ with st.container():
         with col1:
             st.write("**Les IA n'apportent aucun avantages**")
         with col3:
-            st.write("**Les IA apporteront toujours des avantages**")
+            st.write("**Les IA apportent toujours des avantages**")
 
 
         if st.button("Continuer ➡️"):
@@ -759,14 +759,14 @@ with st.container():
             "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
             use_container_width=True)  #
 
-        st.markdown("#### Dans quelle mesure êtes-vous préoccupé.e.s par les IA ?")
+        st.markdown("#### Dans quelle mesure êtes-vous inquiété.e.s par les IA ?")
         ai_concern_scale = st.select_slider("", options=list(range(1, 11)), value=5)
         # Custom labels below the slider
         col1, col2, col3 = st.columns([1, 2, 1])
         with col1:
-            st.write("**Les IA ne me causent aucun souci**")
+            st.write("**Je ne suis pas du tout inquiet.e.s par les IA**")
         with col3:
-            st.write("**Les IA me causent beaucoup d'inquiétude**")
+            st.write("**Je suis toujours inquiet.e.s par les IA**")
 
         if st.button("Continuer ➡️"):
             st.session_state.responses['AI_Concern_Scale'] = ai_concern_scale
@@ -817,11 +817,11 @@ with st.container():
         st.caption("Plusieurs choix possibles")
         ai_responsible_people = st.multiselect("", ["Moi-même",
                                                "Mes proches (amis, frères, soeurs)",
-                                               "L'école (ienseignants, bibliothécaires)",
+                                               "L'école (enseignants, bibliothécaires)",
                                                "L'IA elle-même",
-                                               "Les grandes entreprise de la Tech (Tech companies)",
+                                               "Les grandes entreprise de la Tech ",
                                                "Les parents / éducateurs",
-                                               "Des experts (chercheurs)",
+                                               "Des expert.e.s (chercheur.se.s)",
                                                "Le gouvernement", "Autre"])
 
         ai_other_text = ""
