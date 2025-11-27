@@ -814,6 +814,7 @@ with st.container():
             use_container_width=True)
 
         st.markdown("#### Selon vous, qui est le plus responsable de l'enseignement des compétences dans les IA ?")
+        st.caption("Plusieurs choix possibles")
         ai_responsible_people = st.multiselect("", ["Moi-même",
                                                "Mes proches (amis, frères, soeurs)",
                                                "L'école (ienseignants, bibliothécaires)",
@@ -822,7 +823,6 @@ with st.container():
                                                "Les parents / éducateurs",
                                                "Des experts (chercheurs)",
                                                "Le gouvernement", "Autre"])
-        st.caption("Plusieurs choix possibles")
 
         ai_other_text = ""
         if "Autre" in ai_responsible_people:
