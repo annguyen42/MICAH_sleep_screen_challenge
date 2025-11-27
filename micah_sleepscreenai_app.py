@@ -914,7 +914,7 @@ with st.container():
     # region STEP 18: SUBMIT
     # =========================
     elif st.session_state.step == 18:
-        st.image("./images/image_accueil.png", use_container_width=True)
+        st.image("./images/hands-holding-words-thank-you.jpg", use_container_width=True)
 
         # Initialize a flag to track if data was already submitted
         if 'data_submitted' not in st.session_state:
