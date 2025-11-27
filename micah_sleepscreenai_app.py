@@ -534,6 +534,7 @@ with st.container():
         ai_freq = st.radio("", options=["Jamais", "Rarement", "Hebdomadaire", "Souvent", "Tous les jours"])
 
         st.markdown("#### Dans quel but ?", unsafe_allow_html=True)
+        st.caption("Plusieurs choix possibles")
         ai_purpose = st.multiselect("", ["Travail / Devoirs", "Loisirs", "Recherche d'info", "Compagnon virtuel", "Soutien psychologique", "Autre"])
         
         ai_other_text = ""
