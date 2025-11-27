@@ -659,6 +659,7 @@ with st.container():
 
         #st.markdown("<div class='css-card'>", unsafe_allow_html=True)
         st.markdown("#### Quels sont les avantages (bénéfices?) de l'IA pour vous ?")
+        st.caption("Plusieurs choix possibles")
         ai_benefit = st.multiselect("", ["Pratique / Utile", "Rapide", "Ne me juge pas", "Suscite l'inspiration",
                                          "Sentiment d'accomplissement", "Pas de bénéfices", "Autre"])
 
