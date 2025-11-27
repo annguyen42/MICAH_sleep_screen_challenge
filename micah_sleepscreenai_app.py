@@ -785,6 +785,7 @@ with st.container():
             use_container_width=True)
 
         st.markdown("#### Quels sont vos inquiétudes par rapport à l'IA ?")
+        st.caption("Plusieurs choix possibles")
         ai_concern_items = st.multiselect("", ["Perte des capacités de réflexion critique", "Impact sur les générations futures", "Impact sur les industries artistiques et créatives", "Désinformation/mésinformation",
                                          "Impact sur le marché du travail", "Impact sur l'environnement","Manque de confidentialité et de protection des données", "Je n'ai aucune inquiétude", "Autre"])
 
