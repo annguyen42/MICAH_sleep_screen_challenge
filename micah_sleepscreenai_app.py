@@ -868,6 +868,7 @@ with st.container():
             "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
             use_container_width=True)
         st.markdown("#### Les campagnes de prévention sont trop sérieuses, parmi les éléments suivants, lesquels t’aideraient à mieux comprendre les informations sur la bonne utilisation et la sécurité des IA?")
+        st.caption("Plusieurs choix possibles")
         ai_prevention_campaign = st.multiselect("", ["Des explications plus simples et claires",
                                                     "Des vidéos courtes ou des tutoriels",
                                                     "Des influenceurs/ambassadeurs qui en parlent",
