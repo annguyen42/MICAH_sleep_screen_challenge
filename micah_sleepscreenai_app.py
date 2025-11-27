@@ -822,6 +822,7 @@ with st.container():
                                                "Les parents / éducateurs",
                                                "Des experts (chercheurs)",
                                                "Le gouvernement", "Autre"])
+        st.caption("Plusieurs choix possibles")
 
         ai_other_text = ""
         if "Autre" in ai_responsible_people:
