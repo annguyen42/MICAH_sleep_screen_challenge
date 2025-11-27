@@ -460,15 +460,34 @@ with st.container():
         st.title("Point Info")
         #st.image("https://i.imgur.com/F0gQ2Zq.png", caption="Cycle du Sommeil", use_container_width=True) #
 
-        
         st.markdown("""
         <div class='css-card'>
             <h3>Le saviez-vous ?</h3>
-            <p><strong>La Lumière Bleue</strong><br>
-            L'exposition prolongée retarde la sécrétion de mélatonine d'environ 1 heure.<br>
-            Ainsi, regarder par exemple votre smartphone peut retarder votre endormissement.</p>
+            <p>
+                💡 <strong>Parmi les ados suisses :</strong> 81% écrivent à leurs amis, 77% regardent les réseaux sociaux, 
+                75% regardent Youtube avant de s'endormir (MICAH, 2024).
+            </p>
+            <p>
+                💡 Les activités sur smartphone semblent être liées à une réduction du temps de sommeil.
+            </p>
+            <p>
+                💡 <strong>L'exposition prolongée à la lumière bleue</strong> retarde la sécrétion de mélatonine d'environ 1 heure 
+                (Chang et al., 2015, PNAS).
+            </p>
+            <p>
+                💡 <strong>Le sommeil est essentiel pour les apprentissages.</strong>
+            </p>
         </div>
         """, unsafe_allow_html=True)
+        #
+        # st.markdown("""
+        # <div class='css-card'>
+        #     <h3>Le saviez-vous ?</h3>
+        #     <p><strong>La Lumière Bleue</strong><br>
+        #     L'exposition prolongée retarde la sécrétion de mélatonine d'environ 1 heure.<br>
+        #     Ainsi, regarder par exemple votre smartphone peut retarder votre endormissement.</p>
+        # </div>
+        # """, unsafe_allow_html=True)
         
         # Chart from previous request (Static Matplotlib for the "Study Data")
         st.markdown("<div class='css-card'><h4>Données de l'étude MICAH</h4><p>Voici les résultats de la cohorte MICAH concernant les activités avant l'endormissement.</p>", unsafe_allow_html=True)
